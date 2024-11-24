@@ -53,6 +53,8 @@ public class AdminController {
 		long unreadCount = notifications.stream().filter(n -> !n.isRead()).count();
 		model.addAttribute("unreadcount", unreadCount);
 		model.addAttribute("notifications", notifications);
+	    model.addAttribute("currentPage", "dashboard");
+
 		return "admin-index";
 	}
 
@@ -61,6 +63,8 @@ public class AdminController {
 		model.addAttribute("poll", new PollRequest());
 		List<Category> categories = categoryService.getAllCategories();
 		model.addAttribute("categories", categories);
+	    model.addAttribute("currentPage", "admin-create-poll");
+
 		return "poll-create";
 	}
 

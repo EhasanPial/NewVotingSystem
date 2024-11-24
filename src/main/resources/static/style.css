@@ -1,58 +1,338 @@
 body {
-   font-family: Arial, sans-serif;
-   margin: 0;
-   padding: 20px;
-   background-color: #f7f9fc;
-   color: #333;
+	background: #f8f9fa;
+	min-height: 100vh;
 }
 
+.dashboard-header {
+	background: linear-gradient(45deg, #1a237e, #283593);
+	padding: 2rem;
+	color: white;
+	border-radius: 15px;
+	margin-bottom: 2rem;
+	box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+.stats-card {
+	background: white;
+	border-radius: 15px;
+	padding: 1.5rem;
+	margin-bottom: 2rem;
+	box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+	transition: transform 0.3s ease;
+}
+
+.stats-card:hover {
+	transform: translateY(-5px);
+}
+
+.table-container {
+	background: white;
+	border-radius: 15px;
+	padding: 1.5rem;
+	box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+}
+
+.custom-table {
+	border-collapse: separate;
+	border-spacing: 0;
+}
+
+.custom-table thead th {
+	background: #f8f9fa;
+	border: none;
+	padding: 1rem;
+	font-weight: 600;
+	color: #1a237e;
+}
+
+.custom-table tbody td {
+	border: none;
+	padding: 1rem;
+	vertical-align: middle;
+}
+
+.custom-table tbody tr {
+	transition: all 0.3s ease;
+}
+
+.custom-table tbody tr:hover {
+	background: #f8f9fa;
+	transform: scale(1.01);
+}
+
+.btn-create {
+	background: linear-gradient(45deg, #1a237e, #283593);
+	border: none;
+	padding: 0.8rem 2rem;
+	font-weight: 500;
+	border-radius: 10px;
+	transition: all 0.3s ease;
+}
+
+.btn-create:hover {
+	transform: translateY(-2px);
+	box-shadow: 0 5px 15px rgba(26, 35, 126, 0.3);
+}
+
+.category-count {
+	font-size: 2rem;
+	font-weight: bold;
+	color: #1a237e;
+	margin-bottom: 0.5rem;
+}
 
 h1 {
-   text-align: center;
-   color: #0047ab;
-   margin-bottom: 20px;
-   text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+	text-align: center;
+	color: #0047ab;
+	margin-bottom: 20px;
+	text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
 }
-
 
 table {
-   width: 80%;
-   margin: 0 auto;
-   border-collapse: collapse;
-   background-color: #fff;
-   box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+	width: 80%;
+	margin: 0 auto;
+	border-collapse: collapse;
+	background-color: #fff;
+	box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
 }
-
 
 thead {
-   background-color: #0047ab;
-   color: #fff;
+	background-color: #0047ab;
+	color: #fff;
 }
-
 
 th, td {
-   padding: 12px;
-   text-align: center;
-   border: 1px solid #ddd;
+	padding: 12px;
+	text-align: center;
+	border: 1px solid #ddd;
 }
-
 
 th {
-   font-weight: bold;
+	font-weight: bold;
 }
-
 
 tbody tr:nth-child(even) {
-   background-color: #f1f5fc;
+	background-color: #f1f5fc;
 }
-
 
 tbody tr:hover {
-   background-color: #dce7f8;
+	background-color: #dce7f8;
 }
 
-
 td[colspan="5"] {
-   font-style: italic;
-   color: #666;
+	font-style: italic;
+	color: #666;
+}
+
+.notification-bell {
+	background: none;
+	border: none;
+	cursor: pointer;
+	color: #888;
+	transition: color 0.3s ease;
+}
+
+.notification-bell:hover {
+	color: #333;
+}
+
+.notification-bell.subscribed {
+	color: rgb(255, 0, 0);
+}
+
+.container {
+	max-width: 1000px;
+}
+
+.header-notification {
+	position: fixed;
+	top: 20px;
+	right: 20px;
+	z-index: 1000;
+}
+
+.notification-button {
+	background: none;
+	border: none;
+	font-size: 1.5rem;
+	cursor: pointer;
+	position: relative;
+	padding: 10px;
+	color: #333;
+	background-color: white;
+	border-radius: 50%;
+	box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+	transition: transform 0.2s ease;
+}
+
+.notification-button:hover {
+	transform: scale(1.1);
+}
+
+.notification-badge {
+	position: absolute;
+	top: 0;
+	right: 0;
+	background-color: #ff4444;
+	color: white;
+	border-radius: 50%;
+	padding: 2px 6px;
+	font-size: 0.8rem;
+	font-weight: bold;
+}
+
+/* Notification Popup */
+.notification-popup {
+	position: fixed;
+	top: 80px;
+	right: 20px;
+	width: 350px;
+	background-color: white;
+	border-radius: 8px;
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+	z-index: 1001;
+	display: none;
+	opacity: 0;
+	transform: translateY(-10px);
+	transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.notification-popup.show {
+	display: block;
+	opacity: 1;
+	transform: translateY(0);
+}
+
+.notification-header {
+	padding: 15px 20px;
+	border-bottom: 1px solid #eee;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+}
+
+.notification-header h3 {
+	margin: 0;
+	font-size: 1.2rem;
+	color: #333;
+}
+
+.close-button {
+	background: none;
+	border: none;
+	font-size: 1.2rem;
+	cursor: pointer;
+	color: #666;
+	padding: 5px;
+}
+
+.notification-content {
+	max-height: 400px;
+	overflow-y: auto;
+	padding: 10px 0;
+}
+
+.notification-item {
+	padding: 15px 20px;
+	border-bottom: 1px solid #eee;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	transition: background-color 0.2s ease;
+}
+
+.notification-item:hover {
+	background-color: #f8f9fa;
+}
+
+.notification-item.unread {
+	background-color: #f0f7ff;
+}
+
+.notification-info {
+	flex: 1;
+}
+
+.notification-message {
+	display: block;
+	color: #333;
+	margin-bottom: 5px;
+}
+
+.notification-time {
+	font-size: 0.8rem;
+	color: #888;
+}
+
+.mark-read-button {
+	background: none;
+	border: none;
+	color: #007bff;
+	cursor: pointer;
+	padding: 5px;
+	margin-left: 10px;
+}
+
+.no-notifications {
+	padding: 30px 20px;
+	text-align: center;
+	color: #888;
+}
+
+.no-notifications i {
+	font-size: 2rem;
+	margin-bottom: 10px;
+}
+
+/* Scrollbar Styling */
+.notification-content::-webkit-scrollbar {
+	width: 6px;
+}
+
+.notification-content::-webkit-scrollbar-track {
+	background: #f1f1f1;
+}
+
+.notification-content::-webkit-scrollbar-thumb {
+	background: #888;
+	border-radius: 3px;
+}
+
+.navbar {
+    background-color: #007bff;
+    padding: 20px 20px;
+    border-radius: 5px;
+    margin-bottom: 20px;
+}
+
+.navbar-menu ul {
+    list-style: none;
+    margin: 0;
+    padding: 12px;
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    
+}
+
+.navbar-menu a {
+    color: white;
+    text-decoration: none;
+    padding: 5px 15px;
+    font-size: 16px;
+}
+
+.navbar-menu a:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+}
+
+@media (max-width: 768px) {
+    .navbar-menu ul {
+        gap: 15px;
+    }
+    
+    .navbar-menu a {
+        padding: 5px 10px;
+    }
 }

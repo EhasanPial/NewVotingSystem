@@ -371,37 +371,6 @@ body {
 	margin-right: 0.5rem;
 }
 
-@
-keyframes pulse { 0% {
-	transform: scale(1);
-	opacity: 1;
-}
-
-50
-%
-{
-transform
-:
-scale(
-1.05
-);
-opacity
-:
-0.8;
-}
-100
-%
-{
-transform
-:
-scale(
-1
-);
-opacity
-:
-1;
-}
-}
 .voted {
 	animation: pulse 0.5s ease;
 	animation-fill-mode: both;
@@ -472,7 +441,8 @@ opacity
               isTimePoll=${poll.class.simpleName == 'TimePoll'},
               isActive=${isTimePoll ? 
                        (now.isAfter(poll.startTime) && now.isBefore(poll.endTime)) : 
-                       true}">
+                       true},
+              alreadyVotted=${alreadyVottedMap.containsKey(poll.pollId) ? alreadyVottedMap.get(poll.pollId) : false}">
 
 				<h2 class="poll-title" th:text="${poll.title}"></h2>
 				<div style="margin-bottom: 5px"></div>
@@ -535,15 +505,21 @@ opacity
 								th:classappend="${isTimePoll && !isActive && poll.pollResults != null && poll.pollResults.winner == option.title ? 'winner-option-label' : 'option-label'}">
 								<div class="option-text"
 									th:classappend="${poll.pollResults != null && poll.pollResults.winner == option.title ? 'winner-option' : ''}">
-									<span th:text="${option.title}"></span> <span
-										class="option-percentage" th:if="${!isTimePoll || !isActive}"
+
+									<span th:if="${vottedOptionsMap.get(option.optionId)}">
+										<i class="fa-solid fa-circle-check"
+										style="color: #03825c; margin-right: 5px"></i> <span
+										th:text="${option.title}"></span>
+									</span> <span th:unless="${vottedOptionsMap.get(option.optionId)}">
+										<span th:text="${option.title}"></span>
+
+									</span> <span class="option-percentage"
+										th:if="${!isTimePoll || !isActive}"
 										th:text="${option.votePercentage + '%'}"> </span>
 								</div> <!-- Progress Bar -->
 								<div class="option-progress-container" th:if="${!isTimePoll}">
 									<div class="option-progress"
-										th:style="${'width: ' + option.votePercentage + '%'}"
-										>
-									</div>
+										th:style="${'width: ' + option.votePercentage + '%'}"></div>
 								</div>
 							</label>
 						</div>
@@ -554,30 +530,41 @@ opacity
 					<div th:if="${poll.class.simpleName == 'TimePoll'}"
 						th:with="now=${#temporals.createNow()},
                   isActive=${now.isAfter(poll.startTime) && now.isBefore(poll.endTime)}">
-
-						<!-- Status messages for TimePoll -->
+ 						<!-- Status messages for TimePoll -->
 						<div th:if="${now.isBefore(poll.startTime)}"
 							class="alert alert-info">
 							This poll will start on <span
-								th:text="${#temporals.format(poll.startTime, 'dd-MM-yyyy HH:mm')}"></span>
+								th:text="${#temporals.format(poll.startTime, 'dd MMM, yyyy hh:mm a')}"></span>
 						</div>
 						<div th:if="${now.isAfter(poll.endTime)}" class="alert alert-info">
 							This poll has ended on <span
-								th:text="${#temporals.format(poll.endTime, 'dd-MM-yyyy HH:mm')}"></span>
+								th:text="${#temporals.format(poll.endTime, 'dd MMM, yyyy hh:mm a')}"></span>
 						</div>
 
 						<!-- Vote button for TimePoll -->
-						<button type="submit" class="vote-button" th:if="${isActive}">
+
+						<!-- Show "Already Voted" if user has voted -->
+						<!-- <div style="width: 100%" th:if="${isActive and alreadyVotted}"
+							class="alert alert-info">Already Voted</div> -->
+						<!-- Show "Submit Vote" button only if poll is active and user hasn't voted -->
+						<button type="submit" class="vote-button"
+							th:if="${isActive && !alreadyVotted}">
 							<i class="fas fa-vote-yea"></i> Submit Vote
 						</button>
+
 					</div>
 
 					<!-- For OpenPoll -->
 					<div th:if="${poll.class.simpleName == 'OpenPoll'}">
 						<!-- Vote button always shown for OpenPoll -->
-						<button type="submit" class="vote-button">
+						<!-- <div style="width: 100%" th:if="${alreadyVotted}"
+							class="alert alert-info">Already Voted</div> -->
+						<!-- Show "Submit Vote" button only if poll is active and user hasn't voted -->
+						<button type="submit" class="vote-button"
+							th:if="${!alreadyVotted}">
 							<i class="fas fa-vote-yea"></i> Submit Vote
 						</button>
+
 					</div>
 
 				</form>
