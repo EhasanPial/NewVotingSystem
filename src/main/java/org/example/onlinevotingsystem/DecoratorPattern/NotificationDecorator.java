@@ -2,32 +2,22 @@ package org.example.onlinevotingsystem.DecoratorPattern;
 
 import java.util.List;
 
-import org.example.onlinevotingsystem.models.Notification;
 import org.example.onlinevotingsystem.models.User;
-import org.example.onlinevotingsystem.repositories.NotificationRepository;
+import org.example.onlinevotingsystem.services.NotificationService;
 
 public class NotificationDecorator extends BasePollDecorator {
 
-	private NotificationRepository notificationRepository;
+	private NotificationService notificationService;
  
-	public NotificationDecorator(IPollDecorator pollDecorator, NotificationRepository notificationRepository) {
+	public NotificationDecorator(IPollDecorator pollDecorator, NotificationService notificationService) {
 		super(pollDecorator);
-		this.notificationRepository = notificationRepository;
+		this.notificationService = notificationService;
 	}
 
 	@Override
 	public void performOperation(String message, String username, List<User> voters) {
-		notifyVoters(message, username, voters);
+		notificationService.notifyVoters(message, username, voters, poll);
 	}
 
-	private void notifyVoters(String message, String username, List<User> subscribedVoters) {
-		for (User voter : subscribedVoters) {
-			if (voter.getUsername().equals(username)) {
-				continue;
-			}
-			Notification notification = new Notification(message, voter, poll,
-					Notification.NotificationType.POLL_UPDATED);
-			notificationRepository.save(notification);
-		}
-	}
+	
 }

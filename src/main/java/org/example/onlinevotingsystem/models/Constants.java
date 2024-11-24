@@ -8,5 +8,7 @@ public class Constants {
 	public static final String POLL_MANAGER = "Poll Manager";
 	public static final String TRADITIONAL_METHOD = "TRADITIONAL";
 	public static final String WEIGHTED_METHOD = "WEIGHTED";
+	
+	public static final String ROLE_ADMIN_USER_Approver = "ROLE_ADMIN_USER_Approver";
 
 }

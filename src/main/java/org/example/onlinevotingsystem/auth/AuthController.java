@@ -1,7 +1,7 @@
 package org.example.onlinevotingsystem.auth;
 
+import org.example.onlinevotingsystem.FacadePattern.IFacade;
 import org.example.onlinevotingsystem.models.User;
-import org.example.onlinevotingsystem.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -14,12 +14,8 @@ import jakarta.validation.Valid;
 
 @Controller
 public class AuthController {
-	private final UserService userService;
-
 	@Autowired
-	public AuthController(UserService userService) {
-		this.userService = userService;
-	}
+	private IFacade votingSystemFacade;
 
 	@GetMapping("/register")
 	public String showRegistrationForm(Model model) {
@@ -29,7 +25,7 @@ public class AuthController {
 
 	@PostMapping("/register")
 	public String registerUser(@ModelAttribute("user") @Valid User user, Model model) {
-		userService.registerUser(user);
+		votingSystemFacade.createUserAndAdminApprovalNotification(user);
 		model.addAttribute("message", "Registration successful. Please wait for admin approval.");
 		return "login";
 	}

@@ -32,12 +32,14 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
     }
     
     private String determineTargetUrl(Collection<? extends GrantedAuthority> authorities) {
-        boolean isAdmin = authorities.stream()
-            .anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals("ROLE_ADMIN"));
+        boolean isAdminApproval = authorities.stream()
+            .anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals("ROLE_ADMIN_USER_Approver"));
+        boolean isAdminManager = authorities.stream()
+                .anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals("ROLE_ADMIN_POLL_Manager"));
         boolean isUser = authorities.stream()
             .anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals("ROLE_USER"));
             
-        if (isAdmin) {
+        if (isAdminApproval || isAdminManager) {
             return "/admin-index";
         } else if (isUser) {
             return "/polls";

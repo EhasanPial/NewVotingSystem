@@ -6,9 +6,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import org.example.onlinevotingsystem.DecoratorPattern.BasePollDecorator;
-import org.example.onlinevotingsystem.DecoratorPattern.IPollDecorator;
-import org.example.onlinevotingsystem.DecoratorPattern.NotificationDecorator;
 import org.example.onlinevotingsystem.StrategyPattern.FirstPastThePostStrategy;
 import org.example.onlinevotingsystem.StrategyPattern.PollResult;
 import org.example.onlinevotingsystem.StrategyPattern.VotingStrategy;
@@ -21,14 +18,11 @@ import org.example.onlinevotingsystem.models.PollFactory;
 import org.example.onlinevotingsystem.models.PollRequest;
 import org.example.onlinevotingsystem.models.TimePollFactory;
 import org.example.onlinevotingsystem.models.User;
-import org.example.onlinevotingsystem.repositories.NotificationRepository;
 import org.example.onlinevotingsystem.repositories.OptionRepository;
 import org.example.onlinevotingsystem.repositories.PollRepository;
 import org.example.onlinevotingsystem.repositories.UserRepository;
- import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
 @Service
 public class PollService {
@@ -38,15 +32,15 @@ public class PollService {
 
 	@Autowired
 	private OptionRepository optionRepository;
- 
+
 	@Autowired
 	private UserService adminService;
 
 	@Autowired
 	private UserRepository voterRepository;
-	
+
 	@Autowired
-	private NotificationRepository notificationRepository;
+	private NotificationService notificationService;
 
 	private final Map<String, PollFactory> factories;
 	private final Map<String, VotingStrategy> votingStrategies;
@@ -130,61 +124,71 @@ public class PollService {
 		Poll updatedPoll = pollRepository.save(poll);
 		option.setVotePercentage(result.getVotePercentages().get(option.getTitle()));
 
-
 		// update all options with new vote percentage
 		List<Option> options = updatedPoll.getOptions();
 		for (Option opt : options) {
 			opt.setVotePercentage(result.getVotePercentages().get(opt.getTitle()));
 			opt.setVoteCount(result.getVoteCounts().get(opt.getTitle()));
+
+			if (option.getOptionId() == opt.getOptionId()) {
+				if (opt.getUsers() == null) {
+					opt.setUsers(new ArrayList<>());
+				}
+				if (voter.isPresent()) {
+					opt.getUsers().add(voter.get());
+				}
+			}
 			optionRepository.save(opt);
 		}
 
 		// Notify subscribed voters
-		sendNotification(updatedPoll, username);
+		notificationService.sendNotification(updatedPoll, username);
 
 	}
 
-	private void sendNotification(Poll updatedPoll, String username) {
-		IPollDecorator pollDecorator = new BasePollDecorator(updatedPoll);
-		pollDecorator = new NotificationDecorator(pollDecorator, notificationRepository);
+	
 
-		pollDecorator.performOperation("The poll '" + updatedPoll.getTitle() + "' has been updated.", username,
-				updatedPoll.getSubscribedVoters());
 
+	public Map<Integer, Boolean> getAlreadyVottedMap(User user) {
+		Map<Integer, Boolean> map = new HashMap<>();
+		user.getVotedPolls().forEach(poll -> map.put(poll.getPollId(), true));
+
+		return map;
 	}
 
-	public String subscribeToPoll(Long pollId, String username) {
-		User voter = voterRepository.findByUsername(username)
-				.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
-		Poll poll = pollRepository.findByPollId(pollId)
-				.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Poll not found"));
+	public Map<Integer, Boolean> getVotedOptions(List<Poll> polls, Long userId) {
+		Map<Integer, Boolean> votedOptions = new HashMap<>();
 
-		if (!poll.getSubscribedVoters().contains(voter)) {
-			poll.subscribe(voter);
-			pollRepository.save(poll);
-			voter.addSubscribedPoll(poll);
-			voterRepository.save(voter);
-			return "Subscribed successfully to the poll.";
+		// Early return if inputs are null
+		if (polls == null || userId == null) {
+			return votedOptions;
 		}
 
-		throw new ResponseStatusException(HttpStatus.CONFLICT, "Already subscribed to this poll.");
-	}
-
-	public String unsubscribeFromPoll(Long pollId, String username) {
-		User voter = voterRepository.findByUsername(username)
-				.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
-		Poll poll = pollRepository.findByPollId(pollId)
-				.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Poll not found"));
-
-		if (poll.getSubscribedVoters().contains(voter)) {
-			poll.unsubscribe(voter);
-			pollRepository.save(poll);
-			voter.removeSubscribedPoll(poll);
-			voterRepository.save(voter);
-			return "Unsubscribed successfully from the poll.";
+		// First initialize all options to false
+		for (Poll poll : polls) {
+			if (poll.getOptions() != null) {
+				for (Option option : poll.getOptions()) {
+					votedOptions.put((int) option.getOptionId(), false);
+				}
+			}
 		}
 
-		throw new ResponseStatusException(HttpStatus.CONFLICT, "You are not subscribed to this poll.");
-	}
+		// Then mark the options the user has voted on as true
+		for (Poll poll : polls) {
+			if (poll.getOptions() != null) {
+				for (Option option : poll.getOptions()) {
+					if (option.getUsers() != null) {
+						for (User user : option.getUsers()) {
+							if (userId.equals(user.getId())) {
+								votedOptions.put((int) option.getOptionId(), true);
+								break; // No need to check other users once we found a match
+							}
+						}
+					}
+				}
+			}
+		}
 
+		return votedOptions;
+	}
 }

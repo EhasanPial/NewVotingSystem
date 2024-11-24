@@ -52,10 +52,11 @@ public class Notification {
 	private Poll relatedPoll;
 
 	@Enumerated(EnumType.STRING)
+	@Column(length = 50, nullable = false)
 	private NotificationType type;
 
 	public enum NotificationType {
-		POLL_CREATED, POLL_UPDATED
+		POLL_CREATED, POLL_UPDATED, NEW_USER
 	}
 	
 	

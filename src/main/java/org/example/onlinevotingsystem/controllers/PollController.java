@@ -2,13 +2,13 @@ package org.example.onlinevotingsystem.controllers;
 
 import java.security.Principal;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import org.example.onlinevotingsystem.models.Notification;
-import org.example.onlinevotingsystem.models.OpenPoll;
 import org.example.onlinevotingsystem.models.Poll;
-import org.example.onlinevotingsystem.models.TimePoll;
 import org.example.onlinevotingsystem.models.User;
 import org.example.onlinevotingsystem.repositories.UserRepository;
 import org.example.onlinevotingsystem.services.NotificationService;
@@ -37,8 +37,9 @@ public class PollController {
 	@GetMapping("/polls")
 	public String showPollsForVoting(Model model, Principal principal) {
 		List<Poll> polls = pollService.getAllPolls();
+		// reverse polls
+		Collections.reverse(polls);
 
-		 
 		Optional<User> currentUser = voterRepository.findByUsername(principal.getName());
 
 		if (currentUser.isPresent()) {
@@ -49,7 +50,22 @@ public class PollController {
 			long unreadCount = notifications.stream().filter(n -> !n.isRead()).count();
 			model.addAttribute("unreadcount", unreadCount);
 			model.addAttribute("notifications", notifications);
+
+			// already votted map of current user
+			Map<Integer, Boolean> map;
+			map = pollService.getAlreadyVottedMap(currentUser.get());
+			model.addAttribute("alreadyVottedMap", map);
+
+			Map<Integer, Boolean> votedOptions = pollService.getVotedOptions(polls, currentUser.get().getId());
+			model.addAttribute("vottedOptionsMap", votedOptions);
+
+		} else {
+			model.addAttribute("currentUser", null);
+			model.addAttribute("vottedOptionsMap", new HashMap<Long, Boolean>());
+			model.addAttribute("alreadyVottedMap", new HashMap<Integer, Boolean>());
 		}
+
+		//
 
 		model.addAttribute("polls", polls);
 
@@ -67,13 +83,13 @@ public class PollController {
 
 	@PostMapping("/polls/{pollId}/subscribe")
 	public ResponseEntity<?> subscribeToPoll(@PathVariable Long pollId, Principal principal) {
-		String responseMessage = pollService.subscribeToPoll(pollId, principal.getName());
+		String responseMessage = notificationService.subscribeToPoll(pollId, principal.getName());
 		return ResponseEntity.ok(responseMessage);
 	}
 
 	@PostMapping("/polls/{pollId}/unsubscribe")
 	public ResponseEntity<?> unsubscribeFromPoll(@PathVariable Long pollId, Principal principal) {
-		String responseMessage = pollService.unsubscribeFromPoll(pollId, principal.getName());
+		String responseMessage = notificationService.unsubscribeFromPoll(pollId, principal.getName());
 		return ResponseEntity.ok(responseMessage);
 	}
 

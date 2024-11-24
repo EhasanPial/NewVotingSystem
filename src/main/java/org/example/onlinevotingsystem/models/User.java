@@ -55,6 +55,7 @@ public class User {
     @ManyToMany
 	@JoinTable(name = "voted_polls", joinColumns = @JoinColumn(name = "id"), inverseJoinColumns = @JoinColumn(name = "PollID"))
 	private List<Poll> votedPolls;
+     
 
 	@ManyToMany(mappedBy = "subscribedVoters")
 	private List<Poll> subscribedPolls = new ArrayList<>();

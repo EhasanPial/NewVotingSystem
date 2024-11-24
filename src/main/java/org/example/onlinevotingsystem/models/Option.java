@@ -1,11 +1,15 @@
 package org.example.onlinevotingsystem.models;
 
+import java.util.List;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
@@ -36,6 +40,14 @@ public class Option {
     @ManyToOne
     @JoinColumn(name = "PollID", nullable = false)
     private Poll poll;
+    
+    @ManyToMany
+    @JoinTable(
+        name = "user_option_voted",
+        joinColumns = @JoinColumn(name = "OptionID"),
+        inverseJoinColumns = @JoinColumn(name = "id")
+    )
+    private List<User> users;
 
 	 
 
