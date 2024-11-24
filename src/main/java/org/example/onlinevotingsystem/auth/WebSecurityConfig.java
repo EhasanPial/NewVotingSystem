@@ -1,5 +1,6 @@
 package org.example.onlinevotingsystem.auth;
 
+import org.example.onlinevotingsystem.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -15,43 +16,40 @@ import org.springframework.security.web.authentication.AuthenticationFailureHand
 
 @Configuration
 @EnableWebSecurity
-@EnableMethodSecurity(jsr250Enabled = true) //@RolesAllowed("")
+@EnableMethodSecurity(jsr250Enabled = true) // @RolesAllowed("")
 public class WebSecurityConfig {
 
-    private final AuthenticationFailureHandler customAuthenticationFailureHandler;
+	private final AuthenticationFailureHandler customAuthenticationFailureHandler;
+	private final CustomAuthenticationSuccessHandler customAuthenticationSuccessHandler;
+	private final UserService userDetailsService;
 
-    @Autowired // optional
-    public WebSecurityConfig(AuthenticationFailureHandler customAuthenticationFailureHandler) {
-        this.customAuthenticationFailureHandler = customAuthenticationFailureHandler;
-    }
+	@Autowired
+	public WebSecurityConfig(AuthenticationFailureHandler customAuthenticationFailureHandler,
+			UserService userDetailsService, CustomAuthenticationSuccessHandler customAuthenticationSuccessHandler) { // Add
+																												// this
+		this.customAuthenticationFailureHandler = customAuthenticationFailureHandler;
+		this.userDetailsService = userDetailsService;
+		this.customAuthenticationSuccessHandler = customAuthenticationSuccessHandler;
+	}
 
-    @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http
-                .csrf(AbstractHttpConfigurer::disable)
-                .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/register", "/login", "/css/**", "/js/**").permitAll()
-                        .requestMatchers("/admin/**").hasRole("ADMIN")
-                        .anyRequest().authenticated()
-                )
-                .formLogin(form -> form
-                        .loginPage("/login")
-                        .defaultSuccessUrl("/", true)
-                        .failureHandler(customAuthenticationFailureHandler)
-                )
-                .logout(logout -> logout
-                        .logoutSuccessUrl("/login?logout=true")
-                )
-                .httpBasic(Customizer.withDefaults())
-                .exceptionHandling(exception -> exception
-                        .accessDeniedPage("/403")
-                );
+	@Bean
+	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+		http.csrf(AbstractHttpConfigurer::disable)
+				.authorizeHttpRequests(
+						authorize -> authorize.requestMatchers("/register", "/login", "/css/**", "/js/**").permitAll()
+								.requestMatchers("/admin/**").hasRole("ADMIN").anyRequest().authenticated())
+				.formLogin(form -> form.loginPage("/login").successHandler(customAuthenticationSuccessHandler)
+						.failureHandler(customAuthenticationFailureHandler))
+				.logout(logout -> logout.logoutSuccessUrl("/login?logout=true")).httpBasic(Customizer.withDefaults())
+				.exceptionHandling(exception -> exception.accessDeniedPage("/403"))
+				.userDetailsService(userDetailsService);
 
-        return http.build();
-    }
+		return http.build();
+	}
 
-    @Bean
-    public static PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
+	@Bean
+	public static PasswordEncoder passwordEncoder() {
+		return new BCryptPasswordEncoder();
+	}
+
 }

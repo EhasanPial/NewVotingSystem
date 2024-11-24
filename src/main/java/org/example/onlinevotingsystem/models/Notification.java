@@ -22,42 +22,42 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Notification {
-    public Notification(String message, Voter recipient, Poll relatedPoll, NotificationType type) {
-        this.message = message;
-        this.recipient = recipient;
-        this.relatedPoll = relatedPoll;
-        this.timestamp = LocalDateTime.now();
-        this.type = type;
-    }
+	public Notification(String message, User recipient, Poll relatedPoll, NotificationType type) {
+		this.message = message;
+		this.recipient = recipient;
+		this.relatedPoll = relatedPoll;
+		this.timestamp = LocalDateTime.now();
+		this.type = type;
+	}
+ 
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long id;
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+	@Column(nullable = false)
+	private String message;
 
-    @Column(nullable = false)
-    private String message;
+	@Column(nullable = false)
+	private LocalDateTime timestamp;
+	
+	@Column(name = "is_read")
+	private boolean read = false;
 
-    @Column(nullable = false)
-    private LocalDateTime timestamp;
+	@ManyToOne
+	@JoinColumn(name = "nid")
+	private User recipient;
 
-    @Column(name = "is_read")
-    private boolean read = false;
+	@ManyToOne
+	@JoinColumn(name = "PollID")
+	private Poll relatedPoll;
 
-    @ManyToOne
-    @JoinColumn(name = "nid")
-    private Voter recipient;
+	@Enumerated(EnumType.STRING)
+	private NotificationType type;
 
-    @ManyToOne
-    @JoinColumn(name = "PollID")
-    private Poll relatedPoll;
-
-    @Enumerated(EnumType.STRING)
-    private NotificationType type;
-
-    public enum NotificationType {
-        POLL_CREATED, POLL_UPDATED
-    }
-
-
+	public enum NotificationType {
+		POLL_CREATED, POLL_UPDATED
+	}
+	
+	
 
 }

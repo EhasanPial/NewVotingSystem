@@ -1,208 +1,208 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Dashboard</title>
-    <link
-            href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
-            rel="stylesheet">
-    <link
-            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
-            rel="stylesheet">
-    <style>
-        body {
-            background: #f8f9fa;
-            min-height: 100vh;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Dashboard</title>
+<link
+	href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+	rel="stylesheet">
+<link
+	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+	rel="stylesheet">
+<style>
+body {
+	background: #f8f9fa;
+	min-height: 100vh;
+}
 
-        .dashboard-header {
-            background: linear-gradient(45deg, #1a237e, #283593);
-            padding: 2rem;
-            color: white;
-            border-radius: 15px;
-            margin-bottom: 2rem;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-        }
+.dashboard-header {
+	background: linear-gradient(45deg, #1a237e, #283593);
+	padding: 2rem;
+	color: white;
+	border-radius: 15px;
+	margin-bottom: 2rem;
+	box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
 
-        .stats-card {
-            background: white;
-            border-radius: 15px;
-            padding: 1.5rem;
-            margin-bottom: 2rem;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
-            transition: transform 0.3s ease;
-        }
+.stats-card {
+	background: white;
+	border-radius: 15px;
+	padding: 1.5rem;
+	margin-bottom: 2rem;
+	box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+	transition: transform 0.3s ease;
+}
 
-        .stats-card:hover {
-            transform: translateY(-5px);
-        }
+.stats-card:hover {
+	transform: translateY(-5px);
+}
 
-        .table-container {
-            background: white;
-            border-radius: 15px;
-            padding: 1.5rem;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
-        }
+.table-container {
+	background: white;
+	border-radius: 15px;
+	padding: 1.5rem;
+	box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+}
 
-        .custom-table {
-            border-collapse: separate;
-            border-spacing: 0;
-        }
+.custom-table {
+	border-collapse: separate;
+	border-spacing: 0;
+}
 
-        .custom-table thead th {
-            background: #f8f9fa;
-            border: none;
-            padding: 1rem;
-            font-weight: 600;
-            color: #1a237e;
-        }
+.custom-table thead th {
+	background: #f8f9fa;
+	border: none;
+	padding: 1rem;
+	font-weight: 600;
+	color: #1a237e;
+}
 
-        .custom-table tbody td {
-            border: none;
-            padding: 1rem;
-            vertical-align: middle;
-        }
+.custom-table tbody td {
+	border: none;
+	padding: 1rem;
+	vertical-align: middle;
+}
 
-        .custom-table tbody tr {
-            transition: all 0.3s ease;
-        }
+.custom-table tbody tr {
+	transition: all 0.3s ease;
+}
 
-        .custom-table tbody tr:hover {
-            background: #f8f9fa;
-            transform: scale(1.01);
-        }
+.custom-table tbody tr:hover {
+	background: #f8f9fa;
+	transform: scale(1.01);
+}
 
-        .btn-create {
-            background: linear-gradient(45deg, #1a237e, #283593);
-            border: none;
-            padding: 0.8rem 2rem;
-            font-weight: 500;
-            border-radius: 10px;
-            transition: all 0.3s ease;
-        }
+.btn-create {
+	background: linear-gradient(45deg, #1a237e, #283593);
+	border: none;
+	padding: 0.8rem 2rem;
+	font-weight: 500;
+	border-radius: 10px;
+	transition: all 0.3s ease;
+}
 
-        .btn-create:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(26, 35, 126, 0.3);
-        }
+.btn-create:hover {
+	transform: translateY(-2px);
+	box-shadow: 0 5px 15px rgba(26, 35, 126, 0.3);
+}
 
-        .category-count {
-            font-size: 2rem;
-            font-weight: bold;
-            color: #1a237e;
-            margin-bottom: 0.5rem;
-        }
-    </style>
+.category-count {
+	font-size: 2rem;
+	font-weight: bold;
+	color: #1a237e;
+	margin-bottom: 0.5rem;
+}
+</style>
 </head>
 <body>
-<div class="container py-5">
-    <!-- Dashboard Header -->
-    <div class="dashboard-header">
-        <div class="row align-items-center">
-            <div class="col">
-                <h1 class="mb-0">
-                    <i class="fas fa-user-shield me-2"></i> Admin Dashboard
-                </h1>
-                <p class="mb-0 mt-2 opacity-75">Welcome back, Administrator!</p>
-            </div>
-            <div class="col-auto">
-                <button class="btn btn-light" onclick="location.href='/index'">
-                    <i class="fas fa-sign-out-alt me-2"></i> Logout
-                </button>
+	<div class="container py-5">
+		<!-- Dashboard Header -->
+		<div class="dashboard-header">
+			<div class="row align-items-center">
+				<div class="col">
+					<h1 class="mb-0">
+						<i class="fas fa-user-shield me-2"></i> Admin Dashboard
+					</h1>
+					<p class="mb-0 mt-2 opacity-75">Welcome back, Administrator!</p>
+				</div>
+				<div class="col-auto">
+					<button class="btn btn-light" onclick="location.href='/index'">
+						<i class="fas fa-sign-out-alt me-2"></i> Logout
+					</button>
 
-            </div>
-        </div>
-    </div>
+				</div>
+			</div>
+		</div>
 
-    <!-- Stats Cards -->
-    <!--    <div class="row mb-4">
-        <div class="col-md-4">
-            <div class="stats-card">
-                <div class="d-flex justify-content-between align-items-center">
-                    <div>
-                        <h6 class="text-muted mb-2">Total Categories</h6>
-                        <div class="category-count" th:text="${#lists.size(categories)}">0</div>
-                    </div>
-                    <div class="fs-1 text-primary">
-                        <i class="fas fa-folder"></i>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="stats-card">
-                <div class="d-flex justify-content-between align-items-center">
-                    <div>
-                        <h6 class="text-muted mb-2">Active Users</h6>
-                        <div class="category-count">24</div>
-                    </div>
-                    <div class="fs-1 text-success">
-                        <i class="fas fa-users"></i>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="stats-card">
-                <div class="d-flex justify-content-between align-items-center">
-                    <div>
-                        <h6 class="text-muted mb-2">Total Votes</h6>
-                        <div class="category-count">157</div>
-                    </div>
-                    <div class="fs-1 text-warning">
-                        <i class="fas fa-vote-yea"></i>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-   -->
-    <!-- Categories Section -->
-    <div class="table-container">
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <h4 class="mb-0">
-                <i class="fas fa-folder me-2"></i> Categories Management
-            </h4>
-            <a href="/admin-category-create" class="btn btn-create text-white">
-                <i class="fas fa-plus-circle me-2"></i> Create New Category
-            </a>
-        </div>
-
-        <div class="table-responsive">
-            <table class="table custom-table">
-                <thead>
-                <tr>
-                    <th scope="col">#</th>
-                    <th scope="col">Category Name</th>
-                    <!--  <th scope="col">Actions</th> -->
-                </tr>
-                </thead>
-                <tbody>
-                <tr th:each="category, iterStat : ${categories}">
-                    <td><i class="fas fa-folder me-2 text-primary"></i></td>
-                    <td>
-                        <div class="d-flex align-items-center">
-
-                            <span th:text="${category.name}"></span>
+		<!-- Stats Cards -->
+		<!--    <div class="row mb-4">
+            <div class="col-md-4">
+                <div class="stats-card">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="text-muted mb-2">Total Categories</h6>
+                            <div class="category-count" th:text="${#lists.size(categories)}">0</div>
                         </div>
-                    </td>
-                    <!--  <td>
-                        <button class="btn btn-sm btn-outline-primary me-2">
-                            <i class="fas fa-edit"></i>
-                        </button>
-                        <button class="btn btn-sm btn-outline-danger">
-                            <i class="fas fa-trash"></i>
-                        </button>
-                    </td> -->
-                </tr>
-                </tbody>
-            </table>
+                        <div class="fs-1 text-primary">
+                            <i class="fas fa-folder"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="stats-card">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="text-muted mb-2">Active Users</h6>
+                            <div class="category-count">24</div>
+                        </div>
+                        <div class="fs-1 text-success">
+                            <i class="fas fa-users"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="stats-card">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="text-muted mb-2">Total Votes</h6>
+                            <div class="category-count">157</div>
+                        </div>
+                        <div class="fs-1 text-warning">
+                            <i class="fas fa-vote-yea"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-    </div>
-</div>
+       -->
+		<!-- Categories Section -->
+		<div class="table-container">
+			<div class="d-flex justify-content-between align-items-center mb-4">
+				<h4 class="mb-0">
+					<i class="fas fa-folder me-2"></i> Categories Management
+				</h4>
+				<a href="/admin-category-create" class="btn btn-create text-white">
+					<i class="fas fa-plus-circle me-2"></i> Create New Category
+				</a>
+			</div>
 
-<script
-        src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+			<div class="table-responsive">
+				<table class="table custom-table">
+					<thead>
+						<tr>
+							<th scope="col">#</th>
+							<th scope="col">Category Name</th>
+							<!--  <th scope="col">Actions</th> -->
+						</tr>
+					</thead>
+					<tbody>
+						<tr th:each="category, iterStat : ${categories}">
+							<td><i class="fas fa-folder me-2 text-primary"></i></td>
+							<td>
+								<div class="d-flex align-items-center">
+
+									<span th:text="${category.name}"></span>
+								</div>
+							</td>
+							<!--  <td>
+                                <button class="btn btn-sm btn-outline-primary me-2">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="btn btn-sm btn-outline-danger">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </td> -->
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+
+	<script
+		src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

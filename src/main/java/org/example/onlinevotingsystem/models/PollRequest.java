@@ -11,16 +11,17 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class PollRequest {
-    private String title;
-    private String description;
-    private List<Option> options;
-    private String pollDate;
-    private Category category;
-    private LocalDateTime startTime;
-    private LocalDateTime endTime;
-    private boolean isActive;
-    private Voter admin;
-    private String type;
-
+	private String title;
+	private String description;
+	private List<Option> options;
+	private String pollDate;
+	private Category category;
+	private LocalDateTime startTime;
+	private LocalDateTime endTime;
+	private boolean isActive;
+	private User admin;
+	private String type;
+	private String votingStrategy;
+	
 
 }

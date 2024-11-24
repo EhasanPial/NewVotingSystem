@@ -1,6 +1,7 @@
 
-package org.example.onlinevotingsystem.auth;
+package org.example.onlinevotingsystem.repositories;
 
+import org.example.onlinevotingsystem.models.Role;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

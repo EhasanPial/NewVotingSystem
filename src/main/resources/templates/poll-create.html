@@ -1,253 +1,260 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Create Poll</title>
-    <link rel="stylesheet"
-          href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css">
-    <link rel="stylesheet"
-          href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
-    <style>
-        body {
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-            min-height: 100vh;
-            padding: 40px 0;
-        }
+<title>Create Poll</title>
+<link rel="stylesheet"
+	href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css">
+<link rel="stylesheet"
+	href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+<style>
+body {
+	background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+	min-height: 100vh;
+	padding: 40px 0;
+}
 
-        .container {
-            background: white;
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-            padding: 2rem;
-            max-width: 800px;
-        }
+.container {
+	background: white;
+	border-radius: 15px;
+	box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+	padding: 2rem;
+	max-width: 800px;
+}
 
-        .form-title {
-            color: #2c3e50;
-            font-weight: 700;
-            margin-bottom: 2rem;
-            text-align: center;
-            border-bottom: 2px solid #eee;
-            padding-bottom: 1rem;
-        }
+.form-title {
+	color: #2c3e50;
+	font-weight: 700;
+	margin-bottom: 2rem;
+	text-align: center;
+	border-bottom: 2px solid #eee;
+	padding-bottom: 1rem;
+}
 
-        .form-control, .form-select {
-            border: 2px solid #eee;
-            border-radius: 8px;
-            padding: 0.75rem;
-            transition: all 0.3s ease;
-        }
+.form-control, .form-select {
+	border: 2px solid #eee;
+	border-radius: 8px;
+	padding: 0.75rem;
+	transition: all 0.3s ease;
+}
 
-        .form-control:focus, .form-select:focus {
-            border-color: #6366f1;
-            box-shadow: 0 0 0 0.2rem rgba(99, 102, 241, 0.25);
-        }
+.form-control:focus, .form-select:focus {
+	border-color: #6366f1;
+	box-shadow: 0 0 0 0.2rem rgba(99, 102, 241, 0.25);
+}
 
-        .form-label {
-            font-weight: 600;
-            color: #4a5568;
-            margin-bottom: 0.5rem;
-        }
+.form-label {
+	font-weight: 600;
+	color: #4a5568;
+	margin-bottom: 0.5rem;
+}
 
-        .btn {
-            padding: 0.75rem 1.5rem;
-            border-radius: 8px;
-            font-weight: 600;
-            transition: all 0.3s ease;
-        }
+.btn {
+	padding: 0.75rem 1.5rem;
+	border-radius: 8px;
+	font-weight: 600;
+	transition: all 0.3s ease;
+}
 
-        .btn-primary {
-            background: #6366f1;
-            border: none;
-        }
+.btn-primary {
+	background: #6366f1;
+	border: none;
+}
 
-        .btn-primary:hover {
-            background: #4f46e5;
-            transform: translateY(-2px);
-        }
+.btn-primary:hover {
+	background: #4f46e5;
+	transform: translateY(-2px);
+}
 
-        .btn-secondary {
-            background: #9ca3af;
-            border: none;
-        }
+.btn-secondary {
+	background: #9ca3af;
+	border: none;
+}
 
-        .btn-secondary:hover {
-            background: #6b7280;
-        }
+.btn-secondary:hover {
+	background: #6b7280;
+}
 
-        .option-container {
-            position: relative;
-        }
+.option-container {
+	position: relative;
+}
 
-        .remove-option {
-            position: absolute;
-            right: -25px;
-            top: 50%;
-            transform: translateY(-40%);
-            color: #ef4444;
-            cursor: pointer;
-            opacity: 0.7;
-            transition: opacity 0.3s ease;
-            font-size: 1.5rem;
-            font-weight: 600;
-        }
+.remove-option {
+	position: absolute;
+	right: -25px;
+	top: 50%;
+	transform: translateY(-40%);
+	color: #ef4444;
+	cursor: pointer;
+	opacity: 0.7;
+	transition: opacity 0.3s ease;
+	font-size: 1.5rem;
+	font-weight: 600;
+}
 
-        .remove-option:hover {
-            opacity: 1;
-        }
+.remove-option:hover {
+	opacity: 1;
+}
 
-        .message {
-            padding: 1rem;
-            border-radius: 8px;
-            margin-bottom: 1.5rem;
-            animation: fadeIn 0.5s ease;
-        }
+.message {
+	padding: 1rem;
+	border-radius: 8px;
+	margin-bottom: 1.5rem;
+	animation: fadeIn 0.5s ease;
+}
 
-        .text-danger {
-            background-color: #fee2e2;
-            color: #dc2626;
-        }
+.text-danger {
+	background-color: #fee2e2;
+	color: #dc2626;
+}
 
-        .text-success {
-            background-color: #dcfce7;
-            color: #16a34a;
-        }
+.text-success {
+	background-color: #dcfce7;
+	color: #16a34a;
+}
 
-        .section-title {
-            color: #6366f1;
-            font-size: 1.1rem;
-            margin-bottom: 1rem;
-            font-weight: 600;
-        }
-    </style>
+.section-title {
+	color: #6366f1;
+	font-size: 1.1rem;
+	margin-bottom: 1rem;
+	font-weight: 600;
+}
+</style>
 </head>
 <body>
-<div class="container animate__animated animate__fadeIn">
-    <h1 class="form-title">Create New Poll</h1>
+	<div class="container animate__animated animate__fadeIn">
+		<h1 class="form-title">Create New Poll</h1>
 
-    <div th:if="${message != null}" th:text="${message}"
-         th:classappend="${error != null} ? 'text-danger message' : 'text-success message'">
-    </div>
+		<div th:if="${message != null}" th:text="${message}"
+			th:classappend="${error != null} ? 'text-danger message' : 'text-success message'">
+		</div>
 
-    <form th:action="@{/admin-create-poll}" th:object="${poll}"
-          method="post">
-        <div class="row">
-            <div class="col-md-6 mb-4">
-                <div class="section-title">Basic Information</div>
-                <!-- Poll Title -->
-                <div class="mb-3">
-                    <label for="title" class="form-label">Poll Title</label> <input
-                        type="text" id="title" class="form-control" th:field="*{title}"
-                        placeholder="Enter poll title" required>
-                </div>
+		<form th:action="@{/admin-create-poll}" th:object="${poll}"
+			method="post">
+			<div class="row">
+				<div class="col-md-6 mb-4">
+					<div class="section-title">Basic Information</div>
+					<!-- Poll Title -->
+					<div class="mb-3">
+						<label for="title" class="form-label">Poll Title</label> <input
+							type="text" id="title" class="form-control" th:field="*{title}"
+							placeholder="Enter poll title" required>
+					</div>
 
-                <!-- Poll Type -->
-                <div class="mb-3">
-                    <label for="type" class="form-label">Poll Type</label> <select
-                        id="type" class="form-select" th:field="*{type}" required>
-                    <option value="OPEN">Open Poll</option>
-                    <option value="TIME">Timed Poll</option>
-                </select>
-                </div>
+					<!-- Poll Type -->
+					<div class="mb-3">
+						<label for="type" class="form-label">Poll Type</label> <select
+							id="type" class="form-select" th:field="*{type}" required>
+							<option value="OPEN">Open Poll</option>
+							<option value="TIME">Timed Poll</option>
+						</select>
+					</div>
+					<div class="mb-3">
+						<label for="type" class="form-label">Voting Result Strategy</label> <select
+							id="type" class="form-select" th:field="*{votingStrategy}" required>
+							<option value="TRADITIONAL">Traditional Method</option>
+							<option value="WEIGHTED">Weighted Method</option>
+						</select>
+					</div>
 
-                <div id="timeFields" style="display: none;">
-                    <div class="mb-3">
-                        <label for="startTime" class="form-label">Start Time</label> <input
-                            type="datetime-local" id="startTime" class="form-control"
-                            th:field="*{startTime}">
-                    </div>
-                    <div class="mb-3">
-                        <label for="endTime" class="form-label">End Time</label> <input
-                            type="datetime-local" id="endTime" class="form-control"
-                            th:field="*{endTime}">
-                    </div>
-                </div>
+					<div id="timeFields" style="display: none;">
+						<div class="mb-3">
+							<label for="startTime" class="form-label">Start Time</label> <input
+								type="datetime-local" id="startTime" class="form-control"
+								th:field="*{startTime}">
+						</div>
+						<div class="mb-3">
+							<label for="endTime" class="form-label">End Time</label> <input
+								type="datetime-local" id="endTime" class="form-control"
+								th:field="*{endTime}">
+						</div>
+					</div>
 
-                <!-- Poll Category -->
-                <div class="mb-3">
-                    <label for="category" class="form-label">Category</label> <select
-                        id="category" class="form-select" th:field="*{category}" required>
-                    <option value="" disabled selected>Select a category</option>
-                    <option th:each="cat : ${categories}"
-                            th:value="${cat.categoryId}" th:text="${cat.name}"></option>
-                </select>
-                </div>
-            </div>
+					<!-- Poll Category -->
+					<div class="mb-3">
+						<label for="category" class="form-label">Category</label> <select
+							id="category" class="form-select" th:field="*{category}" required>
+							<option value="" disabled selected>Select a category</option>
+							<option th:each="cat : ${categories}"
+								th:value="${cat.categoryId}" th:text="${cat.name}"></option>
+						</select>
+					</div>
+				</div>
 
-            <div class="col-md-6 mb-4">
-                <div class="section-title">Poll Options</div>
-                <div id="options-container">
-                    <div class="option-container mb-3">
-                        <input type="text" name="optionTitles[]" class="form-control"
-                               placeholder="Option 1" required>
-                    </div>
-                    <div class="option-container mb-3">
-                        <input type="text" name="optionTitles[]" class="form-control"
-                               placeholder="Option 2" required>
-                    </div>
-                </div>
-                <button type="button" class="btn btn-secondary mb-4"
-                        onclick="addOption()">+ Add Option</button>
-            </div>
-        </div>
+				<div class="col-md-6 mb-4">
+					<div class="section-title">Poll Options</div>
+					<div id="options-container">
+						<div class="option-container mb-3">
+							<input type="text" name="optionTitles[]" class="form-control"
+								placeholder="Option 1" required>
+						</div>
+						<div class="option-container mb-3">
+							<input type="text" name="optionTitles[]" class="form-control"
+								placeholder="Option 2" required>
+						</div>
+					</div>
+					<button type="button" class="btn btn-secondary mb-4"
+						onclick="addOption()">+ Add Option</button>
+				</div>
+			</div>
 
-        <div class="text-center mt-4">
-            <button type="submit" class="btn btn-primary btn-lg">Create
-                Poll</button>
-        </div>
-    </form>
-</div>
+			<div class="text-center mt-4">
+				<button type="submit" class="btn btn-primary btn-lg">Create
+					Poll</button>
+			</div>
+		</form>
+	</div>
 
-<script>
-    function addOption() {
-        const container = document.getElementById('options-container');
-        const optionCount = container.children.length + 1;
+	<script>
+		function addOption() {
+			const container = document.getElementById('options-container');
+			const optionCount = container.children.length + 1;
 
-        const optionContainer = document.createElement('div');
-        optionContainer.className = 'option-container mb-3';
+			const optionContainer = document.createElement('div');
+			optionContainer.className = 'option-container mb-3';
 
-        const input = document.createElement('input');
-        input.type = 'text';
-        input.name = 'optionTitles[]';
-        input.className = 'form-control';
-        input.placeholder = `Option ${optionCount}`;
-        input.required = true;
+			const input = document.createElement('input');
+			input.type = 'text';
+			input.name = 'optionTitles[]';
+			input.className = 'form-control';
+			input.placeholder = `Option ${optionCount}`;
+			input.required = true;
 
-        const removeBtn = document.createElement('span');
-        removeBtn.innerHTML = '×';
-        removeBtn.className = 'remove-option';
-        removeBtn.onclick = function() {
-            container.removeChild(optionContainer);
-        };
+			const removeBtn = document.createElement('span');
+			removeBtn.innerHTML = '×';
+			removeBtn.className = 'remove-option';
+			removeBtn.onclick = function() {
+				container.removeChild(optionContainer);
+			};
 
-        optionContainer.appendChild(input);
-        optionContainer.appendChild(removeBtn);
-        container.appendChild(optionContainer);
+			optionContainer.appendChild(input);
+			optionContainer.appendChild(removeBtn);
+			container.appendChild(optionContainer);
 
-        input.focus();
-    }
+			input.focus();
+		}
 
-    document.getElementById('type').addEventListener('change', function() {
-        var type = this.value;
-        var timeFields = document.getElementById('timeFields');
-        var startTimeInput = document.getElementById('startTime');
-        var endTimeInput = document.getElementById('endTime');
+		document.getElementById('type').addEventListener('change', function() {
+		    var type = this.value;
+		    var timeFields = document.getElementById('timeFields');
+		    var startTimeInput = document.getElementById('startTime');
+		    var endTimeInput = document.getElementById('endTime');
 
-        if (type === 'TIME') {
-            timeFields.style.display = 'block';
-            startTimeInput.required = true;
-            endTimeInput.required = true;
-        } else {
-            timeFields.style.display = 'none';
-            startTimeInput.required = false;
-            endTimeInput.required = false;
-            // Clear the inputs when hiding
-            startTimeInput.value = '';
-            endTimeInput.value = '';
-        }
-    });
+		    if (type === 'TIME') {
+		        timeFields.style.display = 'block';
+		        startTimeInput.required = true;
+		        endTimeInput.required = true;
+		    } else {
+		        timeFields.style.display = 'none';
+		        startTimeInput.required = false;
+		        endTimeInput.required = false;
+		        // Clear the inputs when hiding
+		        startTimeInput.value = '';
+		        endTimeInput.value = '';
+		    }
+		});
 
-    // Call on page load to set initial state
-    //document.addEventListener('DOMContentLoaded', toggleTimeFields);
-</script>
+		// Call on page load to set initial state
+		//document.addEventListener('DOMContentLoaded', toggleTimeFields);
+	</script>
 </body>
 </html>

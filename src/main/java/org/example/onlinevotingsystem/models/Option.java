@@ -1,6 +1,5 @@
 package org.example.onlinevotingsystem.models;
 
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -32,10 +31,12 @@ public class Option {
     private int voteCount;
 
     @Column(name = "VotePercentage")
-    private int votePercentage;
+    private double votePercentage;
 
     @ManyToOne
     @JoinColumn(name = "PollID", nullable = false)
     private Poll poll;
+
+	 
 
 }

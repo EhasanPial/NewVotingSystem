@@ -13,6 +13,4 @@ import lombok.Setter;
 public class OpenPoll extends Poll {
     @Column(name = "is_active")
     private boolean isActive = true;
-
-    // Constructor, getters, setters
 }

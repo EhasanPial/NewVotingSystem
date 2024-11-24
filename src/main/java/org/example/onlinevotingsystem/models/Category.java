@@ -12,8 +12,8 @@ import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "category")
-@Data
-@NoArgsConstructor
+@Data  
+@NoArgsConstructor  
 @AllArgsConstructor
 public class Category {
 
@@ -24,5 +24,6 @@ public class Category {
 
     @Column(name = "Name", nullable = false)
     private String name;
-
+    
 }
+
