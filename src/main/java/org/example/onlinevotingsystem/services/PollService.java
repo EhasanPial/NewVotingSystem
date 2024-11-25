@@ -22,7 +22,9 @@ import org.example.onlinevotingsystem.repositories.OptionRepository;
 import org.example.onlinevotingsystem.repositories.PollRepository;
 import org.example.onlinevotingsystem.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 @Service
 public class PollService {
@@ -146,9 +148,6 @@ public class PollService {
 
 	}
 
-	
-
-
 	public Map<Integer, Boolean> getAlreadyVottedMap(User user) {
 		Map<Integer, Boolean> map = new HashMap<>();
 		user.getVotedPolls().forEach(poll -> map.put(poll.getPollId(), true));
@@ -191,4 +190,50 @@ public class PollService {
 
 		return votedOptions;
 	}
+
+	public boolean toggleFavorite(Long pollId, String username) {
+		Optional<Poll> pollOpt = pollRepository.findByPollId(pollId);
+
+		if (pollOpt.isEmpty()) {
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Poll not found");
+		}
+		Poll poll = pollOpt.get();
+
+		Optional<User> userOpt = voterRepository.findByUsername(username);
+
+		if (userOpt.isEmpty()) {
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found");
+		}
+
+		User user = userOpt.get();
+
+		if (user.getFavoritePolls().contains(poll)) {
+			user.getFavoritePolls().remove(poll);
+		} else {
+			user.getFavoritePolls().add(poll);
+
+		}
+
+		voterRepository.save(user);
+		return user.getFavoritePolls().contains(poll);
+	}
+
+	public Map<Integer, Boolean> getFavoritePolls(Long id) {
+		Map<Integer, Boolean> favoritePolls = new HashMap<>();
+		Optional<User> user = voterRepository.findById(id);
+		if (user.isPresent()) {
+			user.get().getFavoritePolls().forEach(poll -> favoritePolls.put(poll.getPollId(), true));
+		}
+		return favoritePolls;
+	}
+
+	public List<Poll> getFavoritePollsList(Long id) {
+
+		Optional<User> user = voterRepository.findById(id);
+		if (user.isPresent()) {
+			return user.get().getFavoritePolls();
+		}
+		return new ArrayList<>();
+	}
+
 }

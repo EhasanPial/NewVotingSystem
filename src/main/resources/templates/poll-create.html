@@ -8,23 +8,24 @@
 <link rel="stylesheet"
 	href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
 <style>
+:root {
+	--primary-color: #900C3F;
+	--secondary-color: #900C3F;
+	--background-color: rgb(248, 248, 248);
+	--card-background: #ffffff;
+	--text-primary: #1f2937;
+	--text-secondary: #4b5563;
+}
+
 body {
-	background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+	background: rgb(248, 248, 248);
 	min-height: 100vh;
-	padding: 40px 0;
 }
 
-.container {
-	background: white;
-	border-radius: 15px;
-	box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-	padding: 2rem;
-	max-width: 800px;
-}
-
+ 
 .form-title {
-	color: #2c3e50;
-	font-weight: 700;
+	color: var(--primary-color);
+	font-weight: 400;
 	margin-bottom: 2rem;
 	text-align: center;
 	border-bottom: 2px solid #eee;
@@ -39,14 +40,13 @@ body {
 }
 
 .form-control:focus, .form-select:focus {
-	border-color: #6366f1;
+	border-color: var(--primary-color);
 	box-shadow: 0 0 0 0.2rem rgba(99, 102, 241, 0.25);
 }
 
 .form-label {
 	font-weight: 600;
-	color: #4a5568;
-	margin-bottom: 0.5rem;
+ 	margin-bottom: 0.5rem;
 }
 
 .btn {
@@ -57,7 +57,7 @@ body {
 }
 
 .btn-primary {
-	background: #6366f1;
+	background: var(--primary-color);
 	border: none;
 }
 
@@ -114,24 +114,32 @@ body {
 }
 
 .section-title {
-	color: #6366f1;
+	color: var(--primary-color);
 	font-size: 1.1rem;
 	margin-bottom: 1rem;
 	font-weight: 600;
 }
+.table-container {
+	background: white;
+ 	padding: 1.5rem;
+ 	margin-bottom: 2rem;
+	border-radius: 15px;
+	overflow: auto;
+}
 </style>
 </head>
 <body>
-	<nav th:replace="fragments/navbar :: navbarFragment"></nav>
-	<div class="container animate__animated animate__fadeIn">
-		<h1 class="form-title">Create New Poll</h1>
+	<div class="container animate__animated animate__fadeIn py-3 px-2 ">
+		<nav th:replace="fragments/navbar :: navbarFragment"></nav>
+	
+		<h2 class="form-title">Create New Poll</h2>
 
 		<div th:if="${message != null}" th:text="${message}"
 			th:classappend="${error != null} ? 'text-danger message' : 'text-success message'">
 		</div>
 
 		<form th:action="@{/admin-create-poll}" th:object="${poll}"
-			method="post">
+			method="post" class="table-container">
 			<div class="row">
 				<div class="col-md-6 mb-4">
 					<div class="section-title">Basic Information</div>

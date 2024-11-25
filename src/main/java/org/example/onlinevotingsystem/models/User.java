@@ -50,11 +50,15 @@ public class User {
     private Set<Role> roles = new HashSet<>();
 
     @Column(name = "enabled")
-    private boolean enabled = true; // Default to false until approved
+    private boolean enabled = false; // Default to false until approved
 
     @ManyToMany
 	@JoinTable(name = "voted_polls", joinColumns = @JoinColumn(name = "id"), inverseJoinColumns = @JoinColumn(name = "PollID"))
 	private List<Poll> votedPolls;
+    
+    @ManyToMany
+	@JoinTable(name = "favorite_polls", joinColumns = @JoinColumn(name = "id"), inverseJoinColumns = @JoinColumn(name = "PollID"))
+	private List<Poll> favoritePolls;
      
 
 	@ManyToMany(mappedBy = "subscribedVoters")

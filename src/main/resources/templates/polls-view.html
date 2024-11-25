@@ -317,6 +317,7 @@ body {
 	transition: all 0.3s ease;
 	position: relative;
 	overflow: hidden;
+	background: #f8fafc;
 }
 
 .option-input:checked+.option-label {
@@ -390,7 +391,22 @@ body {
 		justify-content: center;
 	}
 }
+
+.favorite-btn {
+	cursor: pointer;
+	transition: all 0.3s ease;
+	color: #888;
+}
+
+.favorite-btn.active {
+	color: #ff4444;
+}
+
+.favorite-btn:hover {
+	transform: scale(1.1);
+}
 </style>
+<link th:href="@{/style.css}" rel="stylesheet">
 </head>
 <body>
 	<div class="header-notification">
@@ -431,6 +447,8 @@ body {
 		</div>
 	</div>
 	<div class="container animate__animated animate__fadeIn">
+		<div th:replace="~{fragments/navbaruser :: navbarFragment}"></div>
+
 		<h1 class="page-title">Active Polls</h1>
 
 		<div th:each="poll : ${polls}"
@@ -473,17 +491,27 @@ body {
                     <span th:text="${#temporals.format(poll.pollDate, 'MMM dd, yyyy HH:mm')}"></span> -->
 						<span th:text="${poll.pollDate}"></span>
 					</div>
-					<!-- Notification Bell -->
+
 					<div class="poll-notification">
+						<i th:id="'fav-' + ${poll.pollId}"
+							th:class="${favoritePollsMap.containsKey(poll.pollId)} ? 'fas fa-heart favorite-btn active' : 'far fa-heart favorite-btn'"
+							th:onclick="|toggleFavorite(${poll.pollId}, this)|"
+							></i>
+						<!-- Notification Bell -->
 						<button th:if="${currentUser != null}"
 							th:onclick="|toggleSubscription(${poll.pollId}, this)|"
 							class="notification-bell"
+							style="margin-left:5px"
 							th:classappend="${currentUser != null && #lists.contains(currentUser.subscribedPolls, poll) ? 'subscribed' : ''}"
 							th:title="${currentUser != null && #lists.contains(currentUser.subscribedPolls, poll) ? 'Click to unsubscribe' : 'Click to subscribe'}">
 							<i class="fas fa-bell"></i>
 
 						</button>
 					</div>
+
+
+
+
 				</div>
 
 				<div style="margin-top: 15px; margin-bottom: 15px"
@@ -500,24 +528,32 @@ body {
 						<div th:each="option : ${poll.options}" class="option-wrapper">
 							<input type="radio" th:id="${'option-' + option.optionId}"
 								name="optionId" th:value="${option.optionId}" required
-								class="option-input"> <label
+								class="option-input" /> <label style="display: block;"
 								th:for="${'option-' + option.optionId}" class="option-label"
 								th:classappend="${isTimePoll && !isActive && poll.pollResults != null && poll.pollResults.winner == option.title ? 'winner-option-label' : 'option-label'}">
+
 								<div class="option-text"
+									style="display: flex; justify-content: space-between;"
 									th:classappend="${poll.pollResults != null && poll.pollResults.winner == option.title ? 'winner-option' : ''}">
 
+									<!-- Voted option -->
 									<span th:if="${vottedOptionsMap.get(option.optionId)}">
 										<i class="fa-solid fa-circle-check"
 										style="color: #03825c; margin-right: 5px"></i> <span
 										th:text="${option.title}"></span>
-									</span> <span th:unless="${vottedOptionsMap.get(option.optionId)}">
-										<span th:text="${option.title}"></span>
+									</span>
 
-									</span> <span class="option-percentage"
+									<!-- Non-voted option -->
+									<span th:unless="${vottedOptionsMap.get(option.optionId)}">
+										<span th:text="${option.title}"></span>
+									</span>
+
+									<!-- Percentage display -->
+									<span class="option-percentage"
 										th:if="${!isTimePoll || !isActive}"
 										th:text="${option.votePercentage + '%'}"> </span>
 								</div> <!-- Progress Bar -->
-								<div class="option-progress-container" th:if="${!isTimePoll}">
+								<div th:if="${!isTimePoll}" class="option-progress-container">
 									<div class="option-progress"
 										th:style="${'width: ' + option.votePercentage + '%'}"></div>
 								</div>
@@ -530,7 +566,7 @@ body {
 					<div th:if="${poll.class.simpleName == 'TimePoll'}"
 						th:with="now=${#temporals.createNow()},
                   isActive=${now.isAfter(poll.startTime) && now.isBefore(poll.endTime)}">
- 						<!-- Status messages for TimePoll -->
+						<!-- Status messages for TimePoll -->
 						<div th:if="${now.isBefore(poll.startTime)}"
 							class="alert alert-info">
 							This poll will start on <span
@@ -571,8 +607,8 @@ body {
 			</div>
 		</div>
 	</div>
-
-	<script>
+</body>
+<script>
           
         document.addEventListener('DOMContentLoaded', function() {
             // Highlight selected option
@@ -707,16 +743,38 @@ body {
                 badge.remove();
             }
         }
+        
 
-        // Close popup when clicking outside
-        document.addEventListener('click', function(event) {
-            const popup = document.getElementById('notificationPopup');
-            const button = document.querySelector('.notification-button');
-            
-            if (!popup.contains(event.target) && !button.contains(event.target)) {
-                popup.classList.remove('show');
+        
+            function toggleFavorite(pollId, buttonElement) {
+                fetch(`/api/${pollId}/favorite`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    const favIcon = document.getElementById('fav-' + pollId);
+                    if (data.isFavorite) {
+                        favIcon.classList.remove('far');
+                        favIcon.classList.add('fas', 'active');
+                    } else {
+                        favIcon.classList.remove('fas', 'active');
+                        favIcon.classList.add('far');
+                    }
+                })
+                .catch(error => console.error('Error:', error));
             }
-        });
-    </script>
+        
+
+			// Close popup when clicking outside 
+			document.addEventListener('click',
+			function(event) { const popup =
+			document.getElementById('notificationPopup'); const button =
+			document.querySelector('.notification-button'); if
+			(!popup.contains(event.target) && !button.contains(event.target)) {
+			popup.classList.remove('show'); } });
+</script>
 </body>
 </html>

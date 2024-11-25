@@ -17,6 +17,9 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import jakarta.persistence.EntityNotFoundException;
 
 @Service
 public class UserService implements UserDetailsService {
@@ -63,6 +66,18 @@ public class UserService implements UserDetailsService {
 	public Optional<User> findByEmail(String email) {
 		return userRepository.findByEmail(email);
 	}
+
+	public List<User> findAllUsers() {
+		return userRepository.findAll();
+	}
+
+	@Transactional
+	public void approveUser(Long userId) {
+		User user = userRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException("User not found"));
+
+		user.setEnabled(true);
+		userRepository.save(user);
+	}	
 
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {

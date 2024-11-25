@@ -1,22 +1,26 @@
 package org.example.onlinevotingsystem.controllers;
 
 import java.security.Principal;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
 import org.example.onlinevotingsystem.models.Category;
 import org.example.onlinevotingsystem.models.Notification;
+import org.example.onlinevotingsystem.models.Poll;
 import org.example.onlinevotingsystem.models.PollRequest;
 import org.example.onlinevotingsystem.models.User;
 import org.example.onlinevotingsystem.repositories.UserRepository;
 import org.example.onlinevotingsystem.services.CategoryService;
 import org.example.onlinevotingsystem.services.NotificationService;
 import org.example.onlinevotingsystem.services.PollService;
+import org.example.onlinevotingsystem.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -29,12 +33,15 @@ public class AdminController {
 
 	@Autowired
 	private PollService pollService;
+	
 	@Autowired
-
 	private NotificationService notificationService;
+	
 	@Autowired
-
 	private UserRepository voterRepository;
+	
+	@Autowired
+	private UserService userService;
 
 	@GetMapping("/admin-index")
 	public String showAdminIndexPage(Model model, Principal principal) {
@@ -54,6 +61,10 @@ public class AdminController {
 		model.addAttribute("unreadcount", unreadCount);
 		model.addAttribute("notifications", notifications);
 	    model.addAttribute("currentPage", "dashboard");
+	    
+	    List<Poll> polls = pollService.getAllPolls();
+	    Collections.reverse(polls);
+	    model.addAttribute("polls", polls);
 
 		return "admin-index";
 	}
@@ -80,5 +91,25 @@ public class AdminController {
 		}
 		return "redirect:/admin-create-poll";
 	}
+	
+	@GetMapping("/admin-user-list")
+    public String listUsers(Model model) {
+        List<User> users = userService.findAllUsers();
+        model.addAttribute("users", users);
+        return "user";
+    }
+
+    @PostMapping("/admin-approve/{id}")
+    public String approveUser(@PathVariable Long id, RedirectAttributes redirectAttributes) {
+        try {
+            userService.approveUser(id);
+            redirectAttributes.addFlashAttribute("successMessage", "User approved successfully");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Failed to approve user");
+        }
+        return "redirect:/admin-user-list";
+    }
+
+	
 
 }

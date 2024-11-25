@@ -1,132 +1,145 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Register</title>
-    <style>
-        /* Basic Reset */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Register</title>
+<style>
+:root {
+	--primary-color: #900C3F;
+	--secondary-color: #900C3F;
+	--background-color: #f3f4f6;
+	--card-background: #ffffff;
+	--text-primary: #1f2937;
+	--text-secondary: #4b5563;
+}
 
-        body {
-            font-family: 'Arial', sans-serif;
-            background: linear-gradient(to right, #6a11cb, #2575fc);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-        }
+/* Basic Reset */
+* {
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+}
 
-        .register-container {
-            background-color: white;
-            padding: 40px;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            width: 100%;
-            max-width: 400px;
-            text-align: center;
-        }
+body {
+	font-family: 'Arial', sans-serif;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	height: 100vh;
+	margin: 0;
+	background: var(--background-color);
+}
 
-        h2 {
-            font-size: 2rem;
-            margin-bottom: 20px;
-            color: #333;
-        }
+.register-container {
+	background-color: white;
+	padding: 40px;
+	border-radius: 10px;
+	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+	width: 100%;
+	max-width: 400px;
+	text-align: center;
+}
 
-        label {
-            font-size: 1rem;
-            text-align: left;
-            display: block;
-            margin-bottom: 5px;
-            color: #555;
-        }
+h2 {
+	font-size: 2rem;
+	margin-bottom: 20px;
+	color: var(--primary-color);
+}
 
-        input[type="text"], input[type="email"], input[type="password"] {
-            width: 100%;
-            padding: 10px;
-            margin-bottom: 20px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            font-size: 1rem;
-        }
+label {
+	font-size: 1rem;
+	text-align: left;
+	display: block;
+	margin-bottom: 5px;
+	color: #555;
+}
 
-        button {
-            width: 100%;
-            padding: 10px;
-            background-color: #2575fc;
-            border: none;
-            border-radius: 5px;
-            font-size: 1.1rem;
-            color: white;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-        }
+input[type="text"], input[type="email"], input[type="password"] {
+	width: 100%;
+	padding: 10px;
+	margin-bottom: 20px;
+	border: 1px solid #ddd;
+	border-radius: 5px;
+	font-size: 1rem;
+}
 
-        button:hover {
-            background-color: #6a11cb;
-        }
+button {
+	width: 100%;
+	padding: 10px;
+	background-color: var(--primary-color);
+	border: none;
+	border-radius: 5px;
+	font-size: 1.1rem;
+	color: white;
+	cursor: pointer;
+	transition: background-color 0.3s ease;
+}
 
-        .form-footer {
-            margin-top: 15px;
-            font-size: 0.9rem;
-        }
+button:hover {
+	background-color: #6a11cb;
+}
 
-        .form-footer a {
-            color: #2575fc;
-            text-decoration: none;
-        }
+.form-footer {
+	margin-top: 15px;
+	font-size: 0.9rem;
+}
 
-        .form-footer a:hover {
-            text-decoration: underline;
-        }
+.form-footer a {
+	color: #2575fc;
+	text-decoration: none;
+}
 
-        .error, .success {
-            font-size: 0.9rem;
-            margin-top: 10px;
-        }
+.form-footer a:hover {
+	text-decoration: underline;
+}
 
-        .error {
-            color: red;
-        }
+.error, .success {
+	font-size: 0.9rem;
+	margin-top: 10px;
+}
 
-        .success {
-            color: green;
-        }
-    </style>
+.error {
+	color: red;
+}
+
+.success {
+	color: green;
+}
+</style>
 </head>
 <body>
-<div class="register-container">
-    <h2>Register</h2>
-    <form th:action="@{/register}" th:object="${user}" method="post">
-        <label for="name">Name</label>
-        <input type="text" id="name" th:field="*{name}" placeholder="Enter your name" required/><br/>
+	<div class="register-container">
+		<h2>Register</h2>
+		<form th:action="@{/register}" th:object="${user}" method="post">
+			<label for="name">Name</label> <input type="text" id="name"
+				th:field="*{name}" placeholder="Enter your name" required /><br /> <label
+				for="username">Username</label> <input type="text" id="username"
+				th:field="*{username}" placeholder="Choose a username" required /><br />
 
-        <label for="username">Username</label>
-        <input type="text" id="username" th:field="*{username}" placeholder="Choose a username" required/><br/>
+			<label for="email">Email</label> <input type="email" id="email"
+				th:field="*{email}" placeholder="Enter your email" required /><br />
 
-        <label for="email">Email</label>
-        <input type="email" id="email" th:field="*{email}" placeholder="Enter your email" required/><br/>
+			<label for="password">Password</label> <input type="password"
+				id="password" th:field="*{password}" placeholder="Create a password"
+				required /><br />
 
-        <label for="password">Password</label>
-        <input type="password" id="password" th:field="*{password}" placeholder="Create a password" required/><br/>
+			<button type="submit">Register</button>
 
-        <button type="submit">Register</button>
+			<div th:if="${error}" class="error">
+				<div th:if="${error == 'true'}">There was an error processing
+					your registration. Please try again.</div>
+			</div>
 
-        <div th:if="${error}" class="error">
-            <div th:if="${error == 'true'}">There was an error processing your registration. Please try again.</div>
-        </div>
+			<div th:if="${param.success}" class="success">Registration
+				successful! You can now log in.</div>
+		</form>
 
-        <div th:if="${param.success}" class="success">Registration successful! You can now log in.</div>
-    </form>
-
-    <div class="form-footer">
-        <p>Already have an account? <a href="/login">Login here</a></p>
-    </div>
-</div>
+		<div class="form-footer">
+			<p>
+				Already have an account? <a href="/login">Login here</a>
+			</p>
+		</div>
+	</div>
 </body>
 </html>

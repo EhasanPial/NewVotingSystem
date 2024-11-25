@@ -1,98 +1,139 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login</title>
-    <style>
-        /* Basic Reset */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        body {
-            font-family: 'Arial', sans-serif;
-            background: linear-gradient(to right, #4facfe, #00f2fe);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-        }
-        .login-container {
-            background-color: white;
-            padding: 40px;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            width: 300px;
-            text-align: center;
-        }
-        h2 {
-            font-size: 2rem;
-            margin-bottom: 20px;
-            color: #333;
-        }
-        label {
-            font-size: 1rem;
-            text-align: left;
-            display: block;
-            margin-bottom: 5px;
-            color: #555;
-        }
-        input[type="text"], input[type="password"] {
-            width: 100%;
-            padding: 10px;
-            margin-bottom: 20px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            font-size: 1rem;
-        }
-        button {
-            width: 100%;
-            padding: 10px;
-            background-color: #4facfe;
-            border: none;
-            border-radius: 5px;
-            font-size: 1rem;
-            color: white;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-        }
-        button:hover {
-            background-color: #00f2fe;
-        }
-        .error, .success {
-            font-size: 0.9rem;
-            margin-top: 10px;
-        }
-        .error {
-            color: red;
-        }
-        .success {
-            color: green;
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Login</title>
+<style>
+
+:root {
+	--primary-color: #900C3F;
+	--secondary-color: #900C3F;
+	--background-color: #f3f4f6;
+	--card-background: #ffffff;
+	--text-primary: #1f2937;
+	--text-secondary: #4b5563;
+}
+
+/* Basic Reset */
+* {
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+}
+
+body {
+	font-family: 'Arial', sans-serif;
+ 	display: flex;
+	justify-content: center;
+	align-items: center;
+	height: 100vh;
+	margin: 0;
+	background: var(--background-color);
+}
+
+.login-container {
+	background-color: white;
+	padding: 40px;
+	border-radius: 10px;
+	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+	width: 300px;
+	text-align: center;
+}
+
+h2 {
+	font-size: 2rem;
+	margin-bottom: 20px;
+	color: var(--primary-color);
+}
+
+label {
+	font-size: 1rem;
+	text-align: left;
+	display: block;
+	margin-bottom: 5px;
+	color: #555;
+}
+
+input[type="text"], input[type="password"] {
+	width: 100%;
+	padding: 10px;
+	margin-bottom: 20px;
+	border: 1px solid #ddd;
+	border-radius: 5px;
+	font-size: 1rem;
+}
+
+button {
+	width: 100%;
+	padding: 10px;
+	background-color: var(--primary-color);
+	border: none;
+	border-radius: 5px;
+	font-size: 1rem;
+	color: white;
+	cursor: pointer;
+	transition: background-color 0.3s ease;
+}
+
+button:hover {
+	background-color: #00fe;
+}
+
+.error, .success {
+	font-size: 0.9rem;
+	margin-top: 10px;
+}
+
+.error {
+	color: red;
+}
+
+.success {
+	color: green;
+}
+
+.form-footer {
+	margin-top: 15px;
+	font-size: 0.9rem;
+}
+
+.form-footer a {
+	color: #2575fc;
+	text-decoration: none;
+}
+
+.form-footer a:hover {
+	text-decoration: underline;
+}
+</style>
 </head>
 <body>
-<div class="login-container">
-    <h2>Login</h2>
-    <form th:action="@{/login}" method="post">
-        <label for="username">Username</label>
-        <input type="text" id="username" name="username" placeholder="Enter username" required/><br/>
+	<div class="login-container">
+		<h2>Login</h2>
+		<form th:action="@{/login}" method="post">
+			<label for="username">Username</label> <input type="text"
+				id="username" name="username" placeholder="Enter username" required /><br />
 
-        <label for="password">Password</label>
-        <input type="password" id="password" name="password" placeholder="Enter password" required/><br/>
+			<label for="password">Password</label> <input type="password"
+				id="password" name="password" placeholder="Enter password" required /><br />
 
-        <button type="submit">Login</button>
+			<button type="submit">Login</button>
 
-        <div th:if="${error}" class="error">
-            <div th:if="${error == 'true'}">Invalid username or password.</div>
-            <div th:if="${error == 'disabled'}">Account not approved yet. Please wait for admin approval.</div>
-        </div>
+			<div th:if="${error}" class="error">
+				<div th:if="${error == 'true'}">Invalid username or password.</div>
+				<div th:if="${error == 'disabled'}">Account not approved yet.
+					Please wait for admin approval.</div>
+			</div>
 
-        <div th:if="${param.logout}" class="success">You have been logged out successfully.</div>
-    </form>
-</div>
+			<div th:if="${param.logout}" class="success">You have been
+				logged out successfully.</div>
+		</form>
+		<div class="form-footer">
+			<p>
+				Not have an account? <a href="/register">Sign up here</a>
+			</p>
+		</div>
+	</div>
 </body>
 </html>

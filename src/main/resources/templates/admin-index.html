@@ -11,16 +11,13 @@
 <link
 	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
 	rel="stylesheet">
-<style>
 
-</style>
 </head>
 <body>
-	<div class="py-5">
+	<div class="container px-4 py-3">
 
 
-		<!-- Dashboard Header -->
-		
+
 		<div th:replace="~{fragments/navbar :: navbarFragment}"></div>
 
 
@@ -70,11 +67,13 @@
 		<!-- Categories Section -->
 		<div class="table-container">
 			<div class="d-flex justify-content-between align-items-center mb-4">
-				<h4 class="mb-0">
-					<i class="fas fa-folder me-2"></i> Categories Management
-				</h4>
-				<a href="/admin-category-create" class="btn btn-create text-white">
-					<i class="fas fa-plus-circle me-2"></i> Create New Category
+				<h5 class="mb-0">
+					<i class="fas fa-folder me-2" style="color: #900C3F"></i>
+					Categories Management
+				</h5>
+				<a href="/admin-category-create" class="btn btn-create text-white"
+					style="background-color: #900C3F"> <i
+					class="fas fa-plus-circle me-2"></i> Create New Category
 				</a>
 			</div>
 
@@ -89,7 +88,8 @@
 					</thead>
 					<tbody>
 						<tr th:each="category, iterStat : ${categories}">
-							<td><i class="fas fa-folder me-2 text-primary"></i></td>
+							<td style="text-align: left"><span
+								th:text="${category.categoryId}"></span></td>
 							<td>
 								<div class="d-flex align-items-center">
 
@@ -109,11 +109,84 @@
 				</table>
 			</div>
 		</div>
+
+		<!-- Polls Section -->
+		<div class="table-container mt-8">
+			<div class="d-flex justify-content-between align-items-center mb-4">
+				<h5 class="mb-0">
+					<i class="fas fa-folder me-2" style="color: #900C3F"></i> All Polls
+				</h5>
+				<a href="/admin-create-poll" class="btn btn-create text-white"
+					style="background-color: #900C3F"> <i
+					class="fas fa-plus-circle me-2"></i> Create New Poll
+				</a>
+			</div>
+			<div th:each="poll : ${polls}"
+				class="poll-card animate__animated animate__fadeInUp">
+
+				<div
+					th:with="now=${#temporals.createNow()},
+              isTimePoll=${poll.class.simpleName == 'TimePoll'},
+              isActive=${isTimePoll ? 
+                       (now.isAfter(poll.startTime) && now.isBefore(poll.endTime)) : 
+                       true}">
+					<h2 class="poll-title" th:text="${poll.title}"></h2>
+					<div style="margin-bottom: 5px"></div>
+					<div class="poll-meta">
+
+						<div class="poll-meta-item">
+							<i class="fas fa-folder"></i> <span
+								th:text="${poll.category.name}"></span>
+							<div style="margin-right: 5px"></div>
+							<i class="fa-solid fa-user"></i> <span
+								th:text="${poll.totalVote}"></span>
+							<div style="margin-right: 5px"></div>
+							<i class="fa-solid fa-gear"></i> <span
+								th:text="${poll.votingStrategy}"></span>
+							<div style="margin-right: 5px"></div>
+							<i class="fa-regular fa-hourglass-half"></i> <span
+								th:if="${poll.class.simpleName == 'TimePoll'}"
+								th:text="${#temporals.format(poll.startTime, 'dd MMM, yyyy hh:mm a') + ' to ' + #temporals.format(poll.endTime, 'dd MMM, yyyy hh:mm a')}">
+							</span> <span th:unless="${poll.class.simpleName == 'TimePoll'}">Open
+								Poll</span>
+
+						</div>
+					</div>
+				</div>
+				<div style="margin-top: 15px; margin-bottom: 15px"
+					>
+					<i class="fa-solid fa-square-poll-vertical" style="color: #0f9970;"></i>
+					<span style="color: #0f9970;">Result: <span
+						th:text="${poll.pollResults != null ? poll.pollResults.winner : 'Tie'}"></span>
+
+					</span>
+				</div>
+				<div th:each="option : ${poll.options}" class="option-wrapper">
+					<input type="radio" th:id="${'option-' + option.optionId}"
+						name="optionId" th:value="${option.optionId}" required
+						class="option-input"> <label
+						th:for="${'option-' + option.optionId}" class="option-label">
+
+						<span th:text="${option.title}"></span> <span
+						class="option-percentage" th:text="${option.votePercentage + '%'}">
+					</span> <!-- Progress Bar -->
+						<div class="option-progress"
+							th:style="${'width: ' + option.votePercentage + '%'}"></div>
+
+					</label>
+				</div>
+
+
+			</div>
+		</div>
 	</div>
 
-	<script
-		src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-	<script>
+</body>
+
+
+<script
+	src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script>
 	function toggleSubscription(pollId, buttonElement) {
 		const isSubscribed = buttonElement.classList.contains('subscribed');
 		const endpoint = isSubscribed ? `/polls/${pollId}/unsubscribe` : `/polls/${pollId}/subscribe`;
@@ -226,6 +299,5 @@
 		}
 	});
 	</script>
-
 </body>
 </html>
