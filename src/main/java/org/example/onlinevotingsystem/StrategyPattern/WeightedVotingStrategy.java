@@ -2,6 +2,7 @@ package org.example.onlinevotingsystem.StrategyPattern;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -20,8 +21,24 @@ public class WeightedVotingStrategy implements VotingStrategy {
 		if (optionWeights == null) {
 			optionWeights = new HashMap<>();
 		}
-
 		List<Option> options = poll.getOptions();
+		if (poll.getWeight() != null) {
+			String[] weightTiles = poll.getWeight().split("-");
+
+			// convert to double array
+			double[] weights = new double[weightTiles.length];
+			for (int i = 0; i < weightTiles.length; i++) {
+				weights[i] = Double.parseDouble(weightTiles[i]);
+			}
+
+			double[] normalizedWeights = normalizeWeights(weights);
+			for (int i = 0; i < normalizedWeights.length; i++) {
+				System.out.println(options.get(i).getTitle() + " : " + normalizedWeights);
+				optionWeights.put(options.get(i).getTitle(), normalizedWeights[i]);
+			}
+
+		}
+
 		if (options == null || options.isEmpty()) {
 			throw new IllegalArgumentException("Poll must have options");
 		}
@@ -80,10 +97,22 @@ public class WeightedVotingStrategy implements VotingStrategy {
 		pollResult.setWinner(winnerOpt != null ? winnerOpt.getTitle() : null);
 		pollResult.setVoteCounts(voteCounts);
 		pollResult.setVotePercentages(percentages);
-		pollResult.setTotalVotes(poll.getTotalVote());  
+		pollResult.setTotalVotes(poll.getTotalVote());
 		pollResult.setPublished(false);
 
 		return pollResult;
+	}
+
+	public static double[] normalizeWeights(double[] weights) {
+
+		double totalSum = Arrays.stream(weights).sum();
+
+		double[] normalizedWeights = new double[weights.length];
+		for (int i = 0; i < weights.length; i++) {
+			normalizedWeights[i] = weights[i] / totalSum;
+		}
+
+		return normalizedWeights;
 	}
 
 }

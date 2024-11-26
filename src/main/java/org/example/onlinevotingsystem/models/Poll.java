@@ -75,7 +75,8 @@ public class Poll {
 	@OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "poll_result_id", referencedColumnName = "id")
     private PollResult pollResults;
-
+	
+	private String weight;
 
  	public void subscribe(User voter) {
 		subscribedVoters.add(voter);

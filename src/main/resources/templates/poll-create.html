@@ -22,7 +22,6 @@ body {
 	min-height: 100vh;
 }
 
- 
 .form-title {
 	color: var(--primary-color);
 	font-weight: 400;
@@ -46,7 +45,7 @@ body {
 
 .form-label {
 	font-weight: 600;
- 	margin-bottom: 0.5rem;
+	margin-bottom: 0.5rem;
 }
 
 .btn {
@@ -119,10 +118,11 @@ body {
 	margin-bottom: 1rem;
 	font-weight: 600;
 }
+
 .table-container {
 	background: white;
- 	padding: 1.5rem;
- 	margin-bottom: 2rem;
+	padding: 1.5rem;
+	margin-bottom: 2rem;
 	border-radius: 15px;
 	overflow: auto;
 }
@@ -131,7 +131,7 @@ body {
 <body>
 	<div class="container animate__animated animate__fadeIn py-3 px-2 ">
 		<nav th:replace="fragments/navbar :: navbarFragment"></nav>
-	
+
 		<h2 class="form-title">Create New Poll</h2>
 
 		<div th:if="${message != null}" th:text="${message}"
@@ -160,7 +160,7 @@ body {
 					</div>
 					<div class="mb-3">
 						<label for="type" class="form-label">Voting Result
-							Strategy</label> <select id="type" class="form-select"
+							Strategy</label> <select id="strategyType" class="form-select"
 							th:field="*{votingStrategy}" required>
 							<option value="TRADITIONAL">Traditional Method</option>
 							<option value="WEIGHTED">Weighted Method</option>
@@ -194,13 +194,19 @@ body {
 				<div class="col-md-6 mb-4">
 					<div class="section-title">Poll Options</div>
 					<div id="options-container">
-						<div class="option-container mb-3">
-							<input type="text" name="optionTitles[]" class="form-control"
-								placeholder="Option 1" required>
+						<div class="option-container mb-3 d-flex align-items-center">
+							<input type="text" name="optionTitles[]"
+								class="form-control me-2" placeholder="Option 1" required>
+							<input type="number" name="optionWeights[]"
+								class="form-control weight-input" placeholder="Weight" min="1"
+								value="1" style="display: none; width: 100px;">
 						</div>
-						<div class="option-container mb-3">
-							<input type="text" name="optionTitles[]" class="form-control"
-								placeholder="Option 2" required>
+						<div class="option-container mb-3 d-flex align-items-center">
+							<input type="text" name="optionTitles[]"
+								class="form-control me-2" placeholder="Option 2" required>
+							<input type="number" name="optionWeights[]"
+								class="form-control weight-input" placeholder="Weight" min="1"
+								value="1" style="display: none; width: 100px;">
 						</div>
 					</div>
 					<button type="button" class="btn btn-secondary mb-4"
@@ -216,40 +222,48 @@ body {
 	</div>
 
 	<script>
-		function addOption() {
-			const container = document.getElementById('options-container');
-			const optionCount = container.children.length + 1;
-
-			const optionContainer = document.createElement('div');
-			optionContainer.className = 'option-container mb-3';
-
-			const input = document.createElement('input');
-			input.type = 'text';
-			input.name = 'optionTitles[]';
-			input.className = 'form-control';
-			input.placeholder = `Option ${optionCount}`;
-			input.required = true;
-
-			const removeBtn = document.createElement('span');
-			removeBtn.innerHTML = '×';
-			removeBtn.className = 'remove-option';
-			removeBtn.onclick = function() {
-				container.removeChild(optionContainer);
-			};
-
-			optionContainer.appendChild(input);
-			optionContainer.appendChild(removeBtn);
-			container.appendChild(optionContainer);
-
-			input.focus();
-		}
+	function addOption() {
+	    const container = document.getElementById('options-container');
+	    const newOptionContainer = document.createElement('div');
+	    newOptionContainer.className = 'option-container mb-3 d-flex align-items-center';
+	    
+	    const titleInput = document.createElement('input');
+	    titleInput.type = 'text';
+	    titleInput.name = 'optionTitles[]';
+	    titleInput.className = 'form-control me-2';
+	    titleInput.placeholder = `Option ${container.children.length + 1}`;
+	    titleInput.required = true;
+	    
+	    const weightInput = document.createElement('input');
+	    weightInput.type = 'number';
+	    weightInput.name = 'optionWeights[]';
+	    weightInput.className = 'form-control weight-input';
+	    weightInput.placeholder = 'Weight';
+	    weightInput.min = '1';
+	    weightInput.value = '1';
+	    weightInput.style.display = 
+	        document.getElementById('strategyType').value === 'WEIGHTED' ? 'block' : 'none';
+	    weightInput.style.width = '100px';
+	    
+	    newOptionContainer.appendChild(titleInput);
+	    newOptionContainer.appendChild(weightInput);
+	    
+	    container.appendChild(newOptionContainer);
+	}
+		
+		document.getElementById('strategyType').addEventListener('change', function() {
+		    const weightInputs = document.querySelectorAll('.weight-input');
+		    weightInputs.forEach(input => {
+		        input.style.display = this.value === 'WEIGHTED' ? 'block' : 'none';
+		    });
+		});
 
 		document.getElementById('type').addEventListener('change', function() {
 			var type = this.value;
 			var timeFields = document.getElementById('timeFields');
 			var startTimeInput = document.getElementById('startTime');
 			var endTimeInput = document.getElementById('endTime');
-
+			
 			if (type === 'TIME') {
 				timeFields.style.display = 'block';
 				startTimeInput.required = true;

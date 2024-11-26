@@ -62,14 +62,19 @@ public class PollService {
 		return pollRepository.findAll();
 	}
 
-	public void createPollWithOptions(PollRequest poll, List<String> optionTitles, String type) {
+	public void createPollWithOptions(PollRequest poll, List<String> optionTitles, List<String> optionWeights,
+			String type) {
 
 		Optional<User> adminUser = adminService.getVoterByUsername(Constants.ADMIN_TYPE_1_USER_NAME);
 
 		if (adminUser.isPresent()) {
 			poll.setAdmin(adminUser.get());
 		}
-
+		if (poll.getVotingStrategy().equals(Constants.WEIGHTED_METHOD) && optionWeights.size() == optionTitles.size()) {
+			String weights = String.join("-", optionWeights);
+			poll.setWeight(weights);
+		}
+		
 		PollFactory factory = factories.get(type);
 		Poll newPoll = factory.createPoll(poll);
 		Poll savedPoll = pollRepository.save(newPoll);
@@ -85,68 +90,66 @@ public class PollService {
 	}
 
 	public void castVote(int optionId, String username) {
-		Option option = optionRepository.findById(optionId).orElseThrow(() -> new RuntimeException("Option not found"));
+	    // Fetch the Option
+	    Option option = optionRepository.findById(optionId)
+	            .orElseThrow(() -> new RuntimeException("Option not found"));
 
-		// Increment vote count
-		option.setVoteCount(option.getVoteCount() + 1);
+	    // Increment vote count for the selected option
+	    option.setVoteCount(option.getVoteCount() + 1);
+	    optionRepository.save(option); // Persist updated option immediately
 
-		// Update poll's total vote count
-		Poll poll = option.getPoll();
-		poll.setTotalVote(poll.getTotalVote() + 1);
+	    // Retrieve the associated Poll
+	    Poll poll = option.getPoll();
+	    poll.setTotalVote(poll.getTotalVote() + 1);
 
-		// Recalculate percentages based on voting strategy
-		VotingStrategy votingStrategy = votingStrategies.get(poll.getVotingStrategy());
-		PollResult result = votingStrategy.calculateResults(poll);
+	    // Ensure poll options have updated vote counts
+	    poll.getOptions().forEach(opt -> {
+	        if (opt.getOptionId() == optionId) {
+	            opt.setVoteCount(option.getVoteCount());
+	        }
+	    });
 
-		// check poll result is already save or not in db
-		if (poll.getPollResults() == null) {
-			result.setTotalVotes(poll.getTotalVote()); // Ensure totalVotes is set
-			poll.setPollResults(result);
-			result.setPoll(poll);
-		} else {
-			PollResult existingResult = poll.getPollResults();
-			existingResult.setTotalVotes(poll.getTotalVote());
-			existingResult.setVoteCounts(result.getVoteCounts());
-			existingResult.setVotePercentages(result.getVotePercentages());
-			existingResult.setWinner(result.getWinner());
-		}
-		result.setPoll(poll);
-		poll = pollRepository.save(poll);
+	    // Update all options' vote percentages and counts using the voting strategy
+	    VotingStrategy votingStrategy = votingStrategies.get(poll.getVotingStrategy());
+	    PollResult result = votingStrategy.calculateResults(poll);
 
-		Optional<User> voter = voterRepository.findByUsername(username);
-		if (voter.isPresent()) {
-			List<Poll> voterPolls = voter.get().getVotedPolls();
-			if (voterPolls == null) {
-				voterPolls = new ArrayList<>();
-			}
-			voterPolls.add(poll);
-			voterRepository.save(voter.get());
-			poll.getVoters().add(voter.get());
-		}
-		Poll updatedPoll = pollRepository.save(poll);
-		option.setVotePercentage(result.getVotePercentages().get(option.getTitle()));
+	    // Save or update the poll result
+	    PollResult existingResult = poll.getPollResults();
+	    if (existingResult == null) {
+	        result.setTotalVotes(poll.getTotalVote());
+	        result.setPoll(poll);
+	        poll.setPollResults(result);
+	    } else {
+	        existingResult.setTotalVotes(poll.getTotalVote());
+	        existingResult.setVoteCounts(result.getVoteCounts());
+	        existingResult.setVotePercentages(result.getVotePercentages());
+	        existingResult.setWinner(result.getWinner());
+	    }
 
-		// update all options with new vote percentage
-		List<Option> options = updatedPoll.getOptions();
-		for (Option opt : options) {
-			opt.setVotePercentage(result.getVotePercentages().get(opt.getTitle()));
-			opt.setVoteCount(result.getVoteCounts().get(opt.getTitle()));
+	    // Persist the poll
+	    pollRepository.save(poll);
 
-			if (option.getOptionId() == opt.getOptionId()) {
-				if (opt.getUsers() == null) {
-					opt.setUsers(new ArrayList<>());
-				}
-				if (voter.isPresent()) {
-					opt.getUsers().add(voter.get());
-				}
-			}
-			optionRepository.save(opt);
-		}
+	    // Update all options with the latest percentages from the voting result
+	    poll.getOptions().forEach(opt -> {
+	        opt.setVotePercentage(result.getVotePercentages().get(opt.getTitle()));
+	        optionRepository.save(opt); // Save updated option
+	    });
 
-		// Notify subscribed voters
-		notificationService.sendNotification(updatedPoll, username);
+	    // Link the voter to the poll
+	    Optional<User> voter = voterRepository.findByUsername(username);
+	    voter.ifPresent(user -> {
+	        if (user.getVotedPolls() == null) {
+	            user.setVotedPolls(new ArrayList<>());
+	        }
+	        user.getVotedPolls().add(poll);
+	        poll.getVoters().add(user);
+	        voterRepository.save(user);
+	    });
 
+	    // Notify subscribers about the updated poll
+	    notificationService.sendNotification(poll, username);
 	}
+
 
 	public Map<Integer, Boolean> getAlreadyVottedMap(User user) {
 		Map<Integer, Boolean> map = new HashMap<>();

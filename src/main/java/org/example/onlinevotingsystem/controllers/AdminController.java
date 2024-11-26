@@ -81,9 +81,10 @@ public class AdminController {
 
 	@PostMapping("/admin-create-poll")
 	public String createPoll(@ModelAttribute PollRequest poll, @RequestParam List<String> optionTitles,
+			@RequestParam List<String> optionWeights,
 			RedirectAttributes redirectAttributes) {
 		try {
-			pollService.createPollWithOptions(poll, optionTitles, poll.getType());
+			pollService.createPollWithOptions(poll, optionTitles, optionWeights, poll.getType());
 			redirectAttributes.addFlashAttribute("message", "Poll created successfully!");
 		} catch (Exception e) {
 			redirectAttributes.addFlashAttribute("error", "An error occurred while creating the poll.");
