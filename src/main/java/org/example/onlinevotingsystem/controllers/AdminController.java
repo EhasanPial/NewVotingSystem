@@ -4,11 +4,14 @@ import java.security.Principal;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import org.example.onlinevotingsystem.models.Category;
+import org.example.onlinevotingsystem.models.Constants;
 import org.example.onlinevotingsystem.models.Notification;
 import org.example.onlinevotingsystem.models.Poll;
 import org.example.onlinevotingsystem.models.PollRequest;
+import org.example.onlinevotingsystem.models.Role;
 import org.example.onlinevotingsystem.models.User;
 import org.example.onlinevotingsystem.repositories.UserRepository;
 import org.example.onlinevotingsystem.services.CategoryService;
@@ -33,13 +36,13 @@ public class AdminController {
 
 	@Autowired
 	private PollService pollService;
-	
+
 	@Autowired
 	private NotificationService notificationService;
-	
+
 	@Autowired
 	private UserRepository voterRepository;
-	
+
 	@Autowired
 	private UserService userService;
 
@@ -60,29 +63,35 @@ public class AdminController {
 		long unreadCount = notifications.stream().filter(n -> !n.isRead()).count();
 		model.addAttribute("unreadcount", unreadCount);
 		model.addAttribute("notifications", notifications);
-	    model.addAttribute("currentPage", "dashboard");
-	    
-	    List<Poll> polls = pollService.getAllPolls();
-	    Collections.reverse(polls);
-	    model.addAttribute("polls", polls);
+		model.addAttribute("currentPage", "dashboard");
+
+		List<Poll> polls = pollService.getAllPolls();
+		Collections.reverse(polls);
+		model.addAttribute("polls", polls);
 
 		return "admin-index";
 	}
 
 	@GetMapping("/admin-create-poll")
-	public String showPollCreationForm(Model model) {
+ 	public String showPollCreationForm(Model model, Principal principal) {
+		Set<Role> role = voterRepository.findByUsername(principal.getName()).get().getRoles();
+		boolean isAdminApprover = role.stream().anyMatch(r -> r.getName().equals(Constants.ROLE_ADMIN_POLL_Approver));
+		if (!isAdminApprover) {
+			// show alert
+		    model.addAttribute("error", "You are not authorized to create a poll.");
+		}
 		model.addAttribute("poll", new PollRequest());
 		List<Category> categories = categoryService.getAllCategories();
 		model.addAttribute("categories", categories);
-	    model.addAttribute("currentPage", "admin-create-poll");
+		model.addAttribute("currentPage", "admin-create-poll");
+		model.addAttribute("isAdminApprover", isAdminApprover);
 
 		return "poll-create";
 	}
 
 	@PostMapping("/admin-create-poll")
 	public String createPoll(@ModelAttribute PollRequest poll, @RequestParam List<String> optionTitles,
-			@RequestParam List<String> optionWeights,
-			RedirectAttributes redirectAttributes) {
+			@RequestParam List<String> optionWeights, RedirectAttributes redirectAttributes) {
 		try {
 			pollService.createPollWithOptions(poll, optionTitles, optionWeights, poll.getType());
 			redirectAttributes.addFlashAttribute("message", "Poll created successfully!");
@@ -92,25 +101,27 @@ public class AdminController {
 		}
 		return "redirect:/admin-create-poll";
 	}
-	
+
 	@GetMapping("/admin-user-list")
-    public String listUsers(Model model) {
-        List<User> users = userService.findAllUsers();
-        model.addAttribute("users", users);
-        return "user";
-    }
+	public String listUsers(Model model, Principal principal) {
+		// Get role
+		Set<Role> role = voterRepository.findByUsername(principal.getName()).get().getRoles();
+		boolean isAdminApprover = role.stream().anyMatch(r -> r.getName().equals(Constants.ROLE_ADMIN_USER_Approver));
+		List<User> users = userService.findAllUsers();
+		model.addAttribute("users", users);
+		model.addAttribute("isAdminApprover", isAdminApprover);
+		return "user";
+	}
 
-    @PostMapping("/admin-approve/{id}")
-    public String approveUser(@PathVariable Long id, RedirectAttributes redirectAttributes) {
-        try {
-            userService.approveUser(id);
-            redirectAttributes.addFlashAttribute("successMessage", "User approved successfully");
-        } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("errorMessage", "Failed to approve user");
-        }
-        return "redirect:/admin-user-list";
-    }
-
-	
+	@PostMapping("/admin-approve/{id}")
+	public String approveUser(@PathVariable Long id, RedirectAttributes redirectAttributes) {
+		try {
+			userService.approveUser(id);
+			redirectAttributes.addFlashAttribute("successMessage", "User approved successfully");
+		} catch (Exception e) {
+			redirectAttributes.addFlashAttribute("errorMessage", "Failed to approve user");
+		}
+		return "redirect:/admin-user-list";
+	}
 
 }

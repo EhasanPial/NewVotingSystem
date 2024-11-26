@@ -137,8 +137,11 @@ body {
 		<div th:if="${message != null}" th:text="${message}"
 			th:classappend="${error != null} ? 'text-danger message' : 'text-success message'">
 		</div>
+		<div th:if="${!isAdminApprover}" th:text="${error}" class="text-danger message">
+			 
+		</div>
 
-		<form th:action="@{/admin-create-poll}" th:object="${poll}"
+		<form th:action="@{/admin-create-poll}" th:object="${poll}" th:if="${isAdminApprover}"
 			method="post" class="table-container">
 			<div class="row">
 				<div class="col-md-6 mb-4">

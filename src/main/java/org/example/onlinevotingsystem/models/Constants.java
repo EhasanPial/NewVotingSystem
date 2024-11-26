@@ -10,5 +10,6 @@ public class Constants {
 	public static final String WEIGHTED_METHOD = "WEIGHTED";
 	
 	public static final String ROLE_ADMIN_USER_Approver = "ROLE_ADMIN_USER_Approver";
+	public static final String ROLE_ADMIN_POLL_Approver = "ROLE_ADMIN_POLL_Manager";
 
 }

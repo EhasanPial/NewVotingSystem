@@ -59,7 +59,7 @@
 										<th>Username</th>
 										<th>Email</th>
 										<th>Status</th>
-										<th class="text-center">Actions</th>
+										<th class="text-center" th:if="${isAdminApprover}">Actions</th>
 									</tr>
 								</thead>
 								<tbody>
@@ -74,7 +74,7 @@
 											class="badge bg-warning text-dark"> <i
 												class="fas fa-clock me-1"></i>Pending
 										</span></td>
-										<td class="text-center">
+										<td class="text-center" th:if="${isAdminApprover}">
 											<form th:if="!${user.enabled}"
 												th:action="@{/admin-approve/{id}(id=${user.id})}"
 												method="post">
