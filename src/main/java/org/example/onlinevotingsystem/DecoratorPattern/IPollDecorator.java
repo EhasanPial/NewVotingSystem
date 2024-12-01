@@ -7,7 +7,7 @@ import org.example.onlinevotingsystem.models.User;
  
 public interface IPollDecorator {
 
-	void performOperation(String message, String username, List<User> voters);
+	boolean performOperation(String message, String username, List<User> voters);
 
 	Poll getPoll();
 }

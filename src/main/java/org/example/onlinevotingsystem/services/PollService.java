@@ -6,6 +6,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import org.example.onlinevotingsystem.DecoratorPattern.BasePollDecorator;
+import org.example.onlinevotingsystem.DecoratorPattern.FavoriteDecorator;
+import org.example.onlinevotingsystem.DecoratorPattern.IPollDecorator;
 import org.example.onlinevotingsystem.StrategyPattern.FirstPastThePostStrategy;
 import org.example.onlinevotingsystem.StrategyPattern.PollResult;
 import org.example.onlinevotingsystem.StrategyPattern.VotingStrategy;
@@ -192,6 +195,17 @@ public class PollService {
 		}
 
 		return votedOptions;
+	}
+	
+	public boolean toggleFavoriteDecorator(long id, String username) {
+		Optional<Poll> pollOpt = pollRepository.findByPollId(id);
+		Poll poll = pollOpt.get();
+		IPollDecorator pollDecorator = new BasePollDecorator(poll);
+		pollDecorator = new FavoriteDecorator(pollDecorator, this);
+
+		return pollDecorator.performOperation("", username,
+				null);
+		 
 	}
 
 	public boolean toggleFavorite(Long pollId, String username) {

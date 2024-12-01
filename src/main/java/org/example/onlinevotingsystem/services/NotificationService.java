@@ -95,15 +95,22 @@ public class NotificationService {
 
 	}
 
-	public void notifyVoters(String message, String username, List<User> subscribedVoters, Poll poll) {
-		for (User voter : subscribedVoters) {
-			if (voter.getUsername().equals(username)) {
-				continue;
+	public boolean notifyVoters(String message, String username, List<User> subscribedVoters, Poll poll) {
+
+		try {
+			for (User voter : subscribedVoters) {
+				if (voter.getUsername().equals(username)) {
+					continue;
+				}
+				Notification notification = new Notification(message, voter, poll,
+						Notification.NotificationType.POLL_UPDATED);
+				notificationRepository.save(notification);
 			}
-			Notification notification = new Notification(message, voter, poll,
-					Notification.NotificationType.POLL_UPDATED);
-			notificationRepository.save(notification);
+			return true;
+		} catch (Exception e) {
+			return false;
 		}
+
 	}
 
 	public void sendNotificationToAdmin(String role) {
@@ -121,6 +128,5 @@ public class NotificationService {
 		}
 
 	}
-
 
 }

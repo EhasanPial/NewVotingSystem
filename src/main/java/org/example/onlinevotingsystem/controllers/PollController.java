@@ -59,7 +59,7 @@ public class PollController {
 
 			Map<Integer, Boolean> votedOptions = pollService.getVotedOptions(polls, currentUser.get().getId());
 			model.addAttribute("vottedOptionsMap", votedOptions);
-			
+
 			Map<Integer, Boolean> favoritePolls = pollService.getFavoritePolls(currentUser.get().getId());
 			model.addAttribute("favoritePollsMap", favoritePolls);
 
@@ -69,20 +69,18 @@ public class PollController {
 			model.addAttribute("alreadyVottedMap", new HashMap<Integer, Boolean>());
 		}
 
-	 
-
 		model.addAttribute("polls", polls);
 
 		return "polls-view";
 	}
-	
+
 	@GetMapping("/favorites")
 	public String getFavoritesPolls(Model model, Principal principal) {
 		Optional<User> currentUser = voterRepository.findByUsername(principal.getName());
 		List<Poll> polls = new ArrayList<>();
 		// reverse polls
 		Collections.reverse(polls);
-		 
+
 		if (currentUser.isPresent()) {
 			polls = pollService.getFavoritePollsList(currentUser.get().getId());
 			model.addAttribute("currentUser", currentUser.get());
@@ -100,9 +98,9 @@ public class PollController {
 
 			Map<Integer, Boolean> votedOptions = pollService.getVotedOptions(polls, currentUser.get().getId());
 			model.addAttribute("vottedOptionsMap", votedOptions);
-			
+
 			Map<Integer, Boolean> favoritePolls = pollService.getFavoritePolls(currentUser.get().getId());
-			model.addAttribute("favoritePollsMap",favoritePolls);
+			model.addAttribute("favoritePollsMap", favoritePolls);
 
 		} else {
 			model.addAttribute("currentUser", null);
@@ -135,13 +133,14 @@ public class PollController {
 		String responseMessage = notificationService.unsubscribeFromPoll(pollId, principal.getName());
 		return ResponseEntity.ok(responseMessage);
 	}
-	
-	 @PostMapping("/api/{id}/favorite")
-	    public ResponseEntity<Map<String, Boolean>> toggleFavorite(@PathVariable Long id,  Principal principal) {
-	        boolean isFavorite = pollService.toggleFavorite(id,principal.getName());
-	        Map<String, Boolean> response = new HashMap<>();
-	        response.put("isFavorite", isFavorite);
-	        return ResponseEntity.ok(response);
-	    }
 
+	@PostMapping("/api/{id}/favorite")
+	public ResponseEntity<Map<String, Boolean>> toggleFavorite(@PathVariable Long id, Principal principal) {
+ 		boolean isFavorite = pollService.toggleFavoriteDecorator(id, principal.getName());
+		Map<String, Boolean> response = new HashMap<>();
+		response.put("isFavorite", isFavorite);
+		return ResponseEntity.ok(response);
+	}
+	
+ 
 }

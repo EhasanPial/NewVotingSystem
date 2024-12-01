@@ -87,7 +87,7 @@
 						</tr>
 					</thead>
 					<tbody>
-						<tr th:each="category, iterStat : ${categories}">
+						<tr th:each="category, iterStat : ${categories}" style="cursor: pointer">
 							<td style="text-align: left"><span
 								th:text="${category.categoryId}"></span></td>
 							<td>

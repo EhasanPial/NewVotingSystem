@@ -35,7 +35,7 @@
 						</tr>
 					</thead>
 					<tbody>
-						<tr th:each="category, iterStat : ${categories}"
+						<tr th:each="category, iterStat : ${categories}" style="cursor: pointer"
 							th:onclick="'window.location.href=\'' + @{/categories/{id}(id=${category.categoryId})} + '\''">
 							<td style="text-align: left"><span
 								th:text="${category.categoryId}"></span></td>
@@ -59,4 +59,6 @@
 			</div>
 		</div>
 	</div>
+	
+	<script th:src="@{/notification.js}"></script>
 </body>

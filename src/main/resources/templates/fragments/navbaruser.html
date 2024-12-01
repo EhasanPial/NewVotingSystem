@@ -20,14 +20,18 @@
 			<div class="navbar-menu">
 				<ul>
 					<li><a th:href="@{/polls}"
-						th:class="${currentPage == 'dashboard'} ? 'active' : ''">
-							All Polls </a></li>
+						th:class="${currentPage == 'dashboard'} ? 'active' : ''"> All
+							Polls </a></li>
 					<li><a th:href="@{/categrories}"
 						th:class="${currentPage == '@{/categrories}'} ? 'active' : ''">
 							Category </a></li>
 					<li><a th:href="@{/favorites}"
 						th:class="${currentPage == 'favorites'} ? 'active' : ''">
 							Favorites </a></li>
+					<li style="margin-left: auto"><a th:href="@{/logout}"
+						style="color: #ffffff;"><i
+							class="fa-solid fa-arrow-right-from-bracket"
+							style="color: #ffffff;"></i> Logout</a></li>
 					<!--<li><a th:href="@{/reports}"
 					th:class="${currentPage == 'reports'} ? 'active' : ''"> Reports
 				</a></li>
@@ -37,7 +41,7 @@
 				</ul>
 
 
-				<!-- <div class="header-notification">
+				<div class="header-notification">
 					<button onclick="toggleNotifications()" class="notification-button">
 						<i class="fas fa-bell"></i> <span class="notification-badge"
 							th:if="${notifications != null && unreadcount > 0}"
@@ -45,8 +49,8 @@
 					</button>
 				</div>
 
-				Notification Popup
-				<div id="notificationPopup" class="notification-popup">
+<!-- 				Notification Popup
+ -->				<div id="notificationPopup" class="notification-popup">
 					<div class="notification-header">
 						<h3>Notifications</h3>
 						<button onclick="toggleNotifications()" class="close-button">
@@ -74,12 +78,14 @@
 							<p>No notifications yet</p>
 						</div>
 					</div>
-				</div> -->
-			</div> 
+				</div>
+			</div>
 
 		</nav>
 
 	</div>
+	
+	<script th:src="@{/notification.js}"></script>
 
 </body>
 </html>

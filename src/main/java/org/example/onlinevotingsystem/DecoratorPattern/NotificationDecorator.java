@@ -15,8 +15,8 @@ public class NotificationDecorator extends BasePollDecorator {
 	}
 
 	@Override
-	public void performOperation(String message, String username, List<User> voters) {
-		notificationService.notifyVoters(message, username, voters, poll);
+	public boolean performOperation(String message, String username, List<User> voters) {
+		return notificationService.notifyVoters(message, username, voters, poll);
 	}
 
 	

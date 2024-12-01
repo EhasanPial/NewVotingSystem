@@ -56,6 +56,14 @@ public class CategoryController {
 	public String showAdminIndexPage(Model model, Principal principal) {
 		List<Category> categories = categoryService.getAllCategories();
 		model.addAttribute("categories", categories);
+		
+		User currentUser = voterRepository.findByUsername(principal.getName()).get();
+		List<Notification> notifications = notificationService.getAllNotifications(currentUser);
+
+		// unread notifications count
+		long unreadCount = notifications.stream().filter(n -> !n.isRead()).count();
+		model.addAttribute("unreadcount", unreadCount);
+		model.addAttribute("notifications", notifications);
 
 		return "categoriesview";
 	}

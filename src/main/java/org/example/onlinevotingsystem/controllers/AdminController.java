@@ -85,6 +85,13 @@ public class AdminController {
 		model.addAttribute("categories", categories);
 		model.addAttribute("currentPage", "admin-create-poll");
 		model.addAttribute("isAdminApprover", isAdminApprover);
+		User currentUser = voterRepository.findByUsername(principal.getName()).get();
+		List<Notification> notifications = notificationService.getAllNotifications(currentUser);
+
+		// unread notifications count
+		long unreadCount = notifications.stream().filter(n -> !n.isRead()).count();
+		model.addAttribute("unreadcount", unreadCount);
+		model.addAttribute("notifications", notifications);
 
 		return "poll-create";
 	}
@@ -110,6 +117,14 @@ public class AdminController {
 		List<User> users = userService.findAllUsers();
 		model.addAttribute("users", users);
 		model.addAttribute("isAdminApprover", isAdminApprover);
+		
+		User currentUser = voterRepository.findByUsername(principal.getName()).get();
+		List<Notification> notifications = notificationService.getAllNotifications(currentUser);
+
+		// unread notifications count
+		long unreadCount = notifications.stream().filter(n -> !n.isRead()).count();
+		model.addAttribute("unreadcount", unreadCount);
+		model.addAttribute("notifications", notifications);
 		return "user";
 	}
 
